@@ -59,7 +59,7 @@ const Dashboard = () => {
     if (!COUNTRIES_LIST) return <p>Carregando países...</p>
     return (
       <>
-      <p>Countries</p>
+      <p>Filtrar por país:</p>
       <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}>
         <option value="">GLOBAL</option>
         {COUNTRIES_LIST.map((i, index) => (
