@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Divider } from 'semantic-ui-react';
 import { API_URL } from '../../constants';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -17,7 +18,7 @@ const Daily = () => {
 
   function BuildChart() {
     return (
-      <div style={{ width: '100%', height: 300 }}>
+      <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
         <ResponsiveContainer>
         <AreaChart
           width={500}
@@ -40,12 +41,13 @@ const Daily = () => {
   }
 
   return (
-    <>
+    <div style={{ padding: '20px' }}>
       <h1>Gráfico</h1>
       <p>Como o contágio global evoluiu do dia 20/01/2020 até hoje</p>
       <Link to="/">&larr; Voltar para dados e filtros</Link>
+      <Divider />
       <BuildChart />
-    </>
+    </div>
   )
 }
 
