@@ -60,27 +60,27 @@ const Dashboard = () => {
     if (!COUNTRIES_LIST) return <p>Carregando países...</p>
     return (
       <>
-      <p>Filtrar por país:</p>
-      <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}>
-        <option value="">GLOBAL</option>
-        {COUNTRIES_LIST.map((i, index) => (
-          <option key={index} value={i.sigla2}>{i.nome}</option>
-        ))}
-      </select>
+        <p>Filtrar:</p>
+        <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}>
+          <option value="">GLOBAL</option>
+          {COUNTRIES_LIST.map((i, index) => (
+            <option key={index} value={i.sigla2}>{i.nome}</option>
+          ))}
+        </select>
       </>
     )
   }
   
   return (
     <DashboardWrapper>
-      <h2 className="title">ESTATISTICAS {selectedCountry ? selectedCountryFullName[0].nome : "GLOBAIS"}</h2>
-      <Divider hidden />
+      <h2 className="title">{selectedCountry ? selectedCountryFullName[0].nome : "GLOBAL"}</h2>
       <FilterCountries />
       <Stats />
       <Divider />
       <Divider hidden />
-      <Link to="/daily">Ver Gráficos &rarr;</Link>
       <p>Como o contágio <strong>global</strong> evoluiu do dia 20/01/2020 até hoje</p>
+      <Link to="/daily">Ver Gráficos &rarr;</Link>
+      <Divider hidden />
       <small>Gráficos por países estão em desenvolvimento...</small>
     </DashboardWrapper>
   )
