@@ -9,13 +9,13 @@ const Dashboard = () => {
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.sigla2 === selectedCountry) : null
   function useStats () {
     const [stats, setStats] = useState();
-    const [error, setError] = useState();
+    
     useEffect(() => {
       async function fetchData() {
         const res = await fetch(`${API_URL}/${selectedCountry ? 'countries/' : ''}${selectedCountry ? selectedCountry : ''}`)
         .then(data => data.json())
         .catch(err => {
-          setError(`Por enquanto nenhum caso registrado no país ${selectedCountry}`)
+          setMessage(`Por enquanto nenhum caso registrado no país ${selectedCountry}`)
           console.log(err);
         })
         if (!res.error) {
