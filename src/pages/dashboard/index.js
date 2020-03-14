@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Divider, Statistic } from 'semantic-ui-react'
+import { Divider, Statistic, Loader } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
 
@@ -31,7 +31,6 @@ const Dashboard = () => {
 
   function Stats() {
     const stats = useStats();
-    if (!stats) return <p>Carregando...</p>
     return (
       <>
         {message ? (
@@ -39,15 +38,15 @@ const Dashboard = () => {
         ) : (
           <Statistic.Group size="tiny">
           <Statistic>
-            <Statistic.Value>{stats.confirmed.value}</Statistic.Value>
+            <Statistic.Value>{!stats ? <Loader active inline size='mini'/> : stats.confirmed.value}</Statistic.Value>
             <Statistic.Label>Confirmados</Statistic.Label>
           </Statistic>
           <Statistic>
-            <Statistic.Value>{stats.deaths.value}</Statistic.Value>
+            <Statistic.Value>{!stats ? <Loader active inline size='mini'/> : stats.deaths.value}</Statistic.Value>
             <Statistic.Label>Mortes</Statistic.Label>
           </Statistic>
           <Statistic>
-            <Statistic.Value>{stats.recovered.value}</Statistic.Value>
+            <Statistic.Value>{!stats ? <Loader active inline size='mini'/> : stats.recovered.value}</Statistic.Value>
             <Statistic.Label>Recuperações</Statistic.Label>
           </Statistic>
         </Statistic.Group>
@@ -57,7 +56,6 @@ const Dashboard = () => {
   }
 
   function FilterCountries() {
-    
     if (!COUNTRIES_LIST) return <p>Carregando países...</p>
     return (
       <>
