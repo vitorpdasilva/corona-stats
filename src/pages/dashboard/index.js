@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Divider, Statistic, Loader } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
@@ -78,6 +79,8 @@ const Dashboard = () => {
       <Divider />
       <Divider hidden />
       <FilterCountries />
+      <Divider hidden />
+      <Link to="/daily">Ver Gráficos &rarr;</Link>
     </DashboardWrapper>
   )
 }
