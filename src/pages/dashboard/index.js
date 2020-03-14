@@ -4,7 +4,7 @@ import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
 
 const Dashboard = () => {
-  const [selectedCountry, setSelectedCountry] = useState();
+  const [selectedCountry, setSelectedCountry] = useState("BR");
   const [message, setMessage] = useState();
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.sigla2 === selectedCountry) : null
   function useStats () {
