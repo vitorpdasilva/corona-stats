@@ -75,12 +75,13 @@ const Dashboard = () => {
     <DashboardWrapper>
       <h2 className="title">ESTATISTICAS {selectedCountry ? selectedCountryFullName[0].nome : "GLOBAIS"}</h2>
       <Divider hidden />
+      <FilterCountries />
       <Stats />
       <Divider />
       <Divider hidden />
-      <FilterCountries />
-      <Divider hidden />
       <Link to="/daily">Ver Gráficos &rarr;</Link>
+      <p>Como o contágio <strong>global</strong> evoluiu do dia 20/01/2020 até hoje</p>
+      <small>Gráficos por países estão em desenvolvimento...</small>
     </DashboardWrapper>
   )
 }
