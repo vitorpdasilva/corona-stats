@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext, useReducer } from 'react';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-function App() {
+import Context from './Context';
+import reducer from './reducer';
+
+import Dashboard from './pages/dashboard';
+
+const Root = () => {
+  const initialState = useContext(Context);
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Router>
+      <Context.Provider value={{ state, dispatch }}>
+        <Switch>
+          <Route path="/" component={Dashboard} />
+        </Switch>
+      </Context.Provider>
+    </Router>
+  )
 }
 
-export default App;
+export default Root;
