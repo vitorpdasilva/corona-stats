@@ -57,7 +57,6 @@ const Daily = () => {
           <YAxis />
           <Legend />
           <Tooltip />
-          <Area type="monotone" dataKey="totalConfirmed" stroke="#8884d8" fill="#8884d8" />
           <Area type="monotone" dataKey="mainlandChina" stroke="#7ca48b" fill="#82ca9d" />
           <Area type="monotone" dataKey="otherLocations" stroke="#ffc658" fill="#ffc658" />
         </AreaChart>
