@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { parseISO } from 'date-fns';
 import { Divider, Statistic, Loader } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
@@ -8,6 +9,7 @@ const Dashboard = () => {
   const [selectedCountry, setSelectedCountry] = useState("BR");
   const [message, setMessage] = useState();
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.sigla2 === selectedCountry) : null
+  const stats = useStats();
   function useStats () {
     const [stats, setStats] = useState();
     
@@ -21,7 +23,6 @@ const Dashboard = () => {
         })
         if (!res.error) {
           setMessage(null)
-          console.log(res);
           setStats(res);
         }
       }
@@ -81,7 +82,7 @@ const Dashboard = () => {
       <p>Como o contágio <strong>global</strong> evoluiu do dia 20/01/2020 até hoje</p>
       <Link to="/daily">Ver Gráficos &rarr;</Link>
       <Divider hidden />
-      <small>Gráficos por países estão em desenvolvimento...</small>
+      {stats && <small>Ultima Atualização: {parseISO(stats.lastUpdate).toLocaleDateString('PT-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</small> }
     </DashboardWrapper>
   )
 }
