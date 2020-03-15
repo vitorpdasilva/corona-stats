@@ -12,9 +12,9 @@ const Footer = () => {
         flexDirection: 'column'
       }}
     >
-      {/* <small>
+      <small>
         Made with ❤ by <a href="https://github.com/vitorboccio" target="_blank" rel="noopener noreferrer">@vitorboccio</a>
-      </small> */}
+      </small>
     </footer>
   )
 }
