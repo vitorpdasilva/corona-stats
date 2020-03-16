@@ -11,7 +11,6 @@ const Daily = () => {
     async function fetchDailyData() {
       const res = await fetch(`${API_URL}/daily`).then(data => data.json());
       setDataChart(res);
-      console.log(res);
     }
     fetchDailyData();
   }, []);
