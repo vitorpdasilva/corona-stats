@@ -6,7 +6,7 @@ import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
 
 const Dashboard = () => {
-  const [selectedCountry, setSelectedCountry] = useState("AU");
+  const [selectedCountry, setSelectedCountry] = useState();
   const [loading, setLoading] = useState(false);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0)
   const [stats, setStats] = useState();
