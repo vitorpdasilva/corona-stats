@@ -18,7 +18,7 @@ const Daily = () => {
   function BuildChart() {
     return (
       <>
-        <h3>Total de Casos confirmados x Número de recuperações</h3>
+        <h3>Total confirmed cases vs Number of recovereds</h3>
         <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
           <ResponsiveContainer>
           <AreaChart
@@ -40,7 +40,7 @@ const Daily = () => {
           </ResponsiveContainer>
         </div>
         <Divider />
-        <h3>Contágio China Continental x Outros Países</h3>
+        <h3>Outbreak Mainland China vs Other countries</h3>
         <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
         <ResponsiveContainer>
         <AreaChart
@@ -67,9 +67,9 @@ const Daily = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Gráfico</h1>
-      <p>Como o contágio global evoluiu do dia 20/01/2020 até hoje</p>
-      <Link to="/">&larr; Voltar para dados e filtros</Link>
+      <h1>Charts</h1>
+      <p>How the Global Outbreak evolved from 20/01/2020 until today</p>
+      <Link to="/">&larr; Back to data and filters</Link>
       <Divider />
       <BuildChart />
     </div>

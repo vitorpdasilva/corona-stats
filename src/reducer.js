@@ -3,7 +3,7 @@ export default function reducer(state, { type, payload }) {
     case "SELECTED_COUNTRY":
       return {
         ...state,
-        selectedCountr: payload,
+        selectedCountry: payload,
       }
     case "DEATH_DETAIL":
       return {
