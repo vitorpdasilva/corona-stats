@@ -9,21 +9,23 @@ const Dashboard = () => {
   const [selectedCountry, setSelectedCountry] = useState("BR");
   const [message, setMessage] = useState();
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.sigla2 === selectedCountry) : null
-  const stats = useStats();
-  function useStats () {
+  const stats = Stats();
+  function Stats() {
     const [stats, setStats] = useState();
-    
     useEffect(() => {
       async function fetchData() {
         const res = await fetch(`${API_URL}/${selectedCountry ? 'countries/' : ''}${selectedCountry ? selectedCountry : ''}`)
-        .then(data => data.json())
-        .catch(err => {
-          setMessage(`Por enquanto nenhum caso registrado no país ${selectedCountry}`)
-          console.log(err);
-        })
+                          .then(data => data.json())
+                          .catch(err => {
+                            setMessage(`Por enquanto nenhum caso registrado no país ${selectedCountry}`)
+                            console.log(err);
+                          })
         if (!res.error) {
           setMessage(null)
           setStats(res);
+        } else {
+          console.log('err');
+          setMessage(`Por enquanto nenhum caso registrado no país ${selectedCountry}`)
         }
       }
       fetchData();
@@ -31,27 +33,30 @@ const Dashboard = () => {
     return stats;
   }
 
-  function Stats() {
-    const stats = useStats();
+  function BuildStats() {
+    const stats = Stats();
+    
     return (
       <>
         {message ? (
           <h3>{message}</h3>
         ) : (
-          <Statistic.Group size="tiny">
-          <Statistic>
-            <Statistic.Value>{!stats ? <Loader active inline size='mini'/> : stats.confirmed.value}</Statistic.Value>
-            <Statistic.Label>Confirmados</Statistic.Label>
-          </Statistic>
-          <Statistic>
-            <Statistic.Value>{!stats ? <Loader active inline size='mini'/> : stats.deaths.value}</Statistic.Value>
-            <Statistic.Label>Mortes</Statistic.Label>
-          </Statistic>
-          <Statistic>
-            <Statistic.Value>{!stats ? <Loader active inline size='mini'/> : stats.recovered.value}</Statistic.Value>
-            <Statistic.Label>Recuperações</Statistic.Label>
-          </Statistic>
-        </Statistic.Group>
+          <>
+            <Statistic.Group size="tiny">
+              <Statistic>
+                <Statistic.Value>{!stats ? <Loader active inline size='mini'/> : stats.confirmed.value}</Statistic.Value>
+                <Statistic.Label>Confirmados</Statistic.Label>
+              </Statistic>
+              <Statistic>
+                <Statistic.Value>{!stats ? <Loader active inline size='mini'/> : stats.deaths.value}</Statistic.Value>
+                <Statistic.Label>Mortes</Statistic.Label>
+              </Statistic>
+              <Statistic>
+                <Statistic.Value>{!stats ? <Loader active inline size='mini'/> : stats.recovered.value}</Statistic.Value>
+                <Statistic.Label>Recuperações</Statistic.Label>
+              </Statistic>
+            </Statistic.Group>
+          </>
         )}
       </>
     )
@@ -76,7 +81,7 @@ const Dashboard = () => {
     <DashboardWrapper>
       <h2 className="title">{selectedCountry ? selectedCountryFullName[0].nome : "GLOBAL"}</h2>
       <FilterCountries />
-      <Stats />
+      <BuildStats />
       <Divider />
       <Divider hidden />
       <p>Como o contágio <strong>global</strong> evoluiu do dia 20/01/2020 até hoje</p>
