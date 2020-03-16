@@ -18,9 +18,9 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
+        setMessage(null)
         const resStats = await fetch(`${API_URL}${selectedCountry ? `/countries/${selectedCountry}` : ''}`).then(data => data.json())
         const deathStats = await fetch(resStats.deaths.detail).then(data => data.json());
-        setMessage(null)
         setStats(resStats);
         setDeaths(deathStats)
       } catch (err) {
@@ -53,7 +53,7 @@ const Dashboard = () => {
               <Statistic.Label>Recovered</Statistic.Label>
             </Statistic>
           </Statistic.Group>
-          {deaths && deaths.length > 0 && selectedCountry && (
+          {deaths && deaths.length > 0 && selectedCountry && !loading && (
             <>
               <Divider />
               <Flag name={selectedCountry.toLowerCase()} /> Where the deaths happened
