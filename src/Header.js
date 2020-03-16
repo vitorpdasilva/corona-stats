@@ -5,7 +5,7 @@ const Header = () => (
     style={{ display: 'flex', alignItems: 'center', padding: '20px' }}
   >
     <Icon name="dna" /> 
-    <h2 style={{ marginTop: '5px' }}>Números e informações sobre o Corona Vírus (Covid-19)</h2>
+    <h2 style={{ marginTop: '5px' }}>Numbers and data related to Corona Virus (Covid-19)</h2>
   </header>
     
 );
