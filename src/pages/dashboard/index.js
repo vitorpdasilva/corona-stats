@@ -4,9 +4,10 @@ import { parseISO } from 'date-fns';
 import { Divider, Statistic, Loader, Flag, Accordion, Icon } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
+import getParameterByName from '../../helpers/getQueryParam';
 
 const Dashboard = () => {
-  const [selectedCountry, setSelectedCountry] = useState();
+  const [selectedCountry, setSelectedCountry] = useState(undefined);
   const [loading, setLoading] = useState(false);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0)
   const [stats, setStats] = useState();
@@ -32,6 +33,22 @@ const Dashboard = () => {
     } 
     fetchStats();
   }, [selectedCountry]);
+
+  useEffect(() => {
+    const country = getParameterByName('country');
+    if( country ) {
+      setSelectedCountry(country);
+    }
+  }, [])
+
+  const selectCountry = (country) => {
+    if (window.history.pushState) {
+      const queryParam = country ? `?country=${country}` : '';
+      const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryParam;
+      window.history.pushState({path:newurl}, `Stats - ${country}`,newurl);
+    }
+    setSelectedCountry(country)
+  }
 
   const buildStats = () => (
     <>
@@ -89,7 +106,7 @@ const Dashboard = () => {
     return (
       <>
         <p>Filter:</p>
-        <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}>
+        <select value={selectedCountry} onChange={e => selectCountry(e.target.value)}>
           <option value="">GLOBAL</option>
           {COUNTRIES_LIST.map((i, index) => (
             <option key={index} value={i.sigla2}>{i.nome}</option>
