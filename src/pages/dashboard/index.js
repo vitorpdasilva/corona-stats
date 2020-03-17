@@ -6,8 +6,8 @@ import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
 
-const Dashboard = () => {
-  const [selectedCountry, setSelectedCountry] = useState(undefined);
+const Dashboard = ({ history, location }) => {
+  const [selectedCountry, setSelectedCountry] = useState();
   const [loading, setLoading] = useState(false);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0)
   const [stats, setStats] = useState();
@@ -17,6 +17,9 @@ const Dashboard = () => {
   
   useEffect(() => {
     const fetchStats = async () => {
+      if (selectedCountry === undefined && getParameterByName('country')) {
+        return;
+      }
       try {
         setLoading(true);
         setMessage(null)
@@ -35,19 +38,15 @@ const Dashboard = () => {
   }, [selectedCountry]);
 
   useEffect(() => {
-    const country = getParameterByName('country');
-    if( country ) {
-      setSelectedCountry(country);
-    }
-  }, [])
+    const country = getParameterByName('country', location.search);
+    setSelectedCountry(country);
+  }, [location.search])
 
   const selectCountry = (country) => {
-    if (window.history.pushState) {
-      const queryParam = country ? `?country=${country}` : '';
-      const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryParam;
-      window.history.pushState({path:newurl}, `Stats - ${country}`,newurl);
-    }
-    setSelectedCountry(country)
+    const countryParam = country ? `?country=${country}` : '';
+    history.push({
+      search: countryParam
+    });
   }
 
   const buildStats = () => (
