@@ -13,8 +13,7 @@ const Dashboard = () => {
   const [stats, setStats] = useState();
   const [deaths, setDeaths] = useState();
   const [message, setMessage] = useState();
-  const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.sigla2 === selectedCountry) : null
-  
+  const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -87,8 +86,6 @@ const Dashboard = () => {
                     </Accordion.Title>
                     <Accordion.Content active={activeAccordionIndex === index}>
                       Confirmed deaths: {i.deaths} <br />
-                      
-
                     </Accordion.Content>
                   </div>
                 ))}
@@ -109,7 +106,7 @@ const Dashboard = () => {
         <select value={selectedCountry} onChange={e => selectCountry(e.target.value)}>
           <option value="">GLOBAL</option>
           {COUNTRIES_LIST.map((i, index) => (
-            <option key={index} value={i.sigla2}>{i.nome}</option>
+            <option key={index} value={i.code}>{i.name}</option>
           ))}
         </select>
       </>
@@ -118,7 +115,7 @@ const Dashboard = () => {
   
   return (
     <DashboardWrapper>
-      <h2 className="title">{selectedCountry ? selectedCountryFullName[0].nome : "GLOBAL"}</h2>
+      <h2 className="title">{selectedCountry ? selectedCountryFullName[0].name : "GLOBAL"}</h2>
       {filterCountries()}
       {buildStats()}
       <Divider />
