@@ -85,6 +85,7 @@ const Dashboard = ({ history, location }) => {
                     </Accordion.Title>
                     <Accordion.Content active={activeAccordionIndex === index}>
                       Confirmed deaths: {i.deaths} <br />
+                      Active cases: {i.active}
                     </Accordion.Content>
                   </div>
                 ))}
