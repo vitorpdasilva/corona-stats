@@ -129,7 +129,7 @@ const Dashboard = ({ history, location }) => {
       {filterCountries()}
       {buildStats()}
       <Divider hidden />
-      {!message && (
+      {!message && selectedCountry && (
         <>
           <div>
             How the virus is spreading in the past&nbsp;
