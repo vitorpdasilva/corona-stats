@@ -58,7 +58,6 @@ const LastCases = ({ country }) => {
       </Segment>
       ) : (
         <div style={{ width: '500px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-40px' }}>
-          {console.log({ country })}
           <ResponsiveContainer>
             <AreaChart
               data={chartData}
