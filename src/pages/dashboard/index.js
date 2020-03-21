@@ -5,6 +5,7 @@ import { Divider, Statistic, Loader, Flag, Accordion, Icon } from 'semantic-ui-r
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
+import LastCases from './LastCases';
 
 const Dashboard = ({ history, location }) => {
   const [selectedCountry, setSelectedCountry] = useState();
@@ -118,6 +119,9 @@ const Dashboard = ({ history, location }) => {
       <h2 className="title">{selectedCountry ? selectedCountryFullName[0].name : "GLOBAL"}</h2>
       {filterCountries()}
       {buildStats()}
+      <Divider hidden />
+      <p>How the virus is spreading in the past <strong>10 days</strong></p>
+      <LastCases country={selectedCountry ? selectedCountryFullName[0].name : ''} />
       <Divider />
       <Divider hidden />
       <p>How the <strong>global</strong> outbreak evolved from the day 20/01/2020 until today</p>
