@@ -23,6 +23,7 @@ const Dashboard = ({ history, location }) => {
     { key: 20, text: 20, value: 20 },
     { key: 30, text: 30, value: 30 },
   ]
+
   useEffect(() => {
     const fetchStats = async () => {
       if (selectedCountry === undefined && getParameterByName('country')) {
@@ -139,7 +140,7 @@ const Dashboard = ({ history, location }) => {
                 inline
                 options={timeRangeOpts}
                 defaultValue={timeRange}
-                onChange={e => setTimeRange(e.target.innerHTML)}
+                onChange={e => setTimeRange(e.target.textContent)}
               /> 
               days
             </strong>
