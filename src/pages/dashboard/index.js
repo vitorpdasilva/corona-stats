@@ -79,7 +79,7 @@ const Dashboard = ({ history, location }) => {
           </Statistic.Group>
           {deaths && deaths.length > 0 && selectedCountry && !loading && (
             <>
-              <Divider />
+              <Divider hidden />
               <Flag name={selectedCountry.toLowerCase()} /> Where the deaths happened
               <Accordion fluid styled>
                 {deaths.map((i, index) => (

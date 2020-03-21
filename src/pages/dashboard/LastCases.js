@@ -63,14 +63,13 @@ const LastCases = ({ country, timeRange }) => {
         <Dimmer active inverted>
           <Loader inverted>Loading</Loader>
         </Dimmer>
-  
         <Image src={PlaceholderImage} />
       </Segment>
     )
   }
   if (!loading && chartData) {
     return (
-      <div style={{ width: '500px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-40px' }}>
+      <div style={{ width: '500px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-20px' }}>
         <ResponsiveContainer>
           <AreaChart
             data={chartData}
