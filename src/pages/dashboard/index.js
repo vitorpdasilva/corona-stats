@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { parseISO } from 'date-fns';
-import { Divider, Statistic, Loader, Flag, Accordion, Icon, Dropdown } from 'semantic-ui-react'
+import { Divider, Statistic, Loader, Flag, Accordion, Icon, Dropdown, Button } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
@@ -149,7 +149,7 @@ const Dashboard = ({ history, location }) => {
       <Divider />
       <Divider hidden />
       <p>How the <strong>global</strong> outbreak evolved from the day 20/01/2020 until today</p>
-      <Link to="/daily">See Charts &rarr;</Link>
+      <Link to="/daily"><Button primary>See Charts &rarr;</Button></Link>
       <Divider hidden />
       {stats && <small>Last Update: {parseISO(stats.lastUpdate).toLocaleDateString('EN-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</small> }
     </DashboardWrapper>
