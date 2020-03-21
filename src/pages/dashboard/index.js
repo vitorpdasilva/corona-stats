@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { parseISO } from 'date-fns';
-import { Divider, Statistic, Loader, Flag, Accordion, Icon } from 'semantic-ui-react'
+import { Divider, Statistic, Loader, Flag, Accordion, Icon, Dropdown } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
@@ -14,7 +14,15 @@ const Dashboard = ({ history, location }) => {
   const [stats, setStats] = useState();
   const [deaths, setDeaths] = useState();
   const [message, setMessage] = useState();
+  const [timeRange, setTimeRange] = useState(10)
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
+  const timeRangeOpts = [
+    { key: 5, text: 5, value: 5 },
+    { key: 10, text: 10, value: 10 },
+    { key: 15, text: 15, value: 15 },
+    { key: 20, text: 20, value: 20 },
+    { key: 30, text: 30, value: 30 },
+  ]
   useEffect(() => {
     const fetchStats = async () => {
       if (selectedCountry === undefined && getParameterByName('country')) {
@@ -120,8 +128,24 @@ const Dashboard = ({ history, location }) => {
       {filterCountries()}
       {buildStats()}
       <Divider hidden />
-      <p>How the virus is spreading in the past <strong>10 days</strong></p>
-      <LastCases country={selectedCountry ? selectedCountryFullName[0].name : ''} />
+      <div>
+        How the virus is spreading in the past&nbsp;
+        <strong>
+          <Dropdown 
+            upward
+            floating
+            inline
+            options={timeRangeOpts}
+            defaultValue={timeRange}
+            onChange={e => setTimeRange(e.target.innerHTML)}
+          /> 
+          days
+        </strong>
+      </div>
+      <LastCases 
+        country={selectedCountry ? selectedCountryFullName[0].name : ''} 
+        timeRange={timeRange}
+      />
       <Divider />
       <Divider hidden />
       <p>How the <strong>global</strong> outbreak evolved from the day 20/01/2020 until today</p>
