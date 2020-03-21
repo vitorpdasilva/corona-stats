@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from 'semantic-ui-react';
 const Header = () => (
   <header 
-    style={{ display: 'flex', alignItems: 'center', padding: '20px' }}
+    style={{ display: 'flex', alignItems: 'center', padding: '20px', paddingBottom: 0 }}
   >
     <Icon name="dna" /> 
     <h2 style={{ marginTop: '5px' }}>Numbers and data related to Corona Virus (Covid-19)</h2>

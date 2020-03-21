@@ -36,7 +36,6 @@ const LastCases = ({ country }) => {
             formatedData[index].newRecovered = Number(i.recovered) - Number(formatedData[index - 1].recovered)
           }
         })
-        console.log({ formatedData });
         setChartData(formatedData);
       } catch (err) {
         console.log({ err });
@@ -46,6 +45,7 @@ const LastCases = ({ country }) => {
     }
     fetchLastCases()
 }, [country]);
+  if (!country) return <span></span>;
   return (
     <>
       {loading ? (
@@ -58,6 +58,7 @@ const LastCases = ({ country }) => {
       </Segment>
       ) : (
         <div style={{ width: '500px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-25px' }}>
+          {console.log({ country })}
           <ResponsiveContainer>
             <LineChart
               width={500}
