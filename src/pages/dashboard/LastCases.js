@@ -16,6 +16,7 @@ const LastCases = ({ country, timeRange }) => {
         setLoading(true);
         for (let i = timeRange; i > 1; i -= 1) {
           const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
+          if (country === 'United States') country = 'US';
           const dataFilter =  data.filter(i => i.countryRegion === country)
           entireData.push(dataFilter);
         }

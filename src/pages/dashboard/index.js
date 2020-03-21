@@ -128,24 +128,28 @@ const Dashboard = ({ history, location }) => {
       {filterCountries()}
       {buildStats()}
       <Divider hidden />
-      <div>
-        How the virus is spreading in the past&nbsp;
-        <strong>
-          <Dropdown 
-            upward
-            floating
-            inline
-            options={timeRangeOpts}
-            defaultValue={timeRange}
-            onChange={e => setTimeRange(e.target.innerHTML)}
-          /> 
-          days
-        </strong>
-      </div>
-      <LastCases 
-        country={selectedCountry ? selectedCountryFullName[0].name : ''} 
-        timeRange={timeRange}
-      />
+      {!message && (
+        <>
+          <div>
+            How the virus is spreading in the past&nbsp;
+            <strong>
+              <Dropdown 
+                upward
+                floating
+                inline
+                options={timeRangeOpts}
+                defaultValue={timeRange}
+                onChange={e => setTimeRange(e.target.innerHTML)}
+              /> 
+              days
+            </strong>
+          </div>
+          <LastCases 
+            country={selectedCountry ? selectedCountryFullName[0].name : ''} 
+            timeRange={timeRange}
+          />
+        </>
+      )}
       <Divider />
       <Divider hidden />
       <p>How the <strong>global</strong> outbreak evolved from the day 20/01/2020 until today</p>
