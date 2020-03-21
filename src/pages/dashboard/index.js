@@ -153,7 +153,7 @@ const Dashboard = ({ history, location }) => {
       )}
       <Divider />
       <Divider hidden />
-      <h4>How the <strong>global</strong> outbreak evolved from the day 20/01/2020 until today</h4>
+      <h3>How the <strong>global</strong> outbreak evolved from the day 20/01/2020 until today</h3>
       <Link to="/daily"><Button primary>See Charts &rarr;</Button></Link>
       <Divider hidden />
       {stats && <small>Last Update: {parseISO(stats.lastUpdate).toLocaleDateString('EN-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</small> }
