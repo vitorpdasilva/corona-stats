@@ -57,7 +57,7 @@ const LastCases = ({ country }) => {
         <Image src='https://react.semantic-ui.com/images/wireframe/short-paragraph.png' />
       </Segment>
       ) : (
-        <div style={{ width: '500px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-25px' }}>
+        <div style={{ width: '500px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-40px' }}>
           {console.log({ country })}
           <ResponsiveContainer>
             <AreaChart
