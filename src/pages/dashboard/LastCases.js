@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { lightFormat, subDays } from 'date-fns';
 import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
 import { API_URL } from '../../constants';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 const LastCases = ({ country }) => {
   const [loading, setLoading] = useState(false);
@@ -60,20 +60,32 @@ const LastCases = ({ country }) => {
         <div style={{ width: '500px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-25px' }}>
           {console.log({ country })}
           <ResponsiveContainer>
-            <LineChart
-              width={500}
-              height={300}
+            <AreaChart
               data={chartData}
             >
+              <defs>
+                <linearGradient id="colorCases" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorDeaths" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorRecovered" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="red" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="red" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="lastUpdate" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="newCases" stroke="#8884d8" activeDot={{ r: 8 }} />
-              <Line type="monotone" dataKey="newDeaths" stroke="#82ca9d" />
-              <Line type="monotone" dataKey="newRecovered" stroke="red" />
-            </LineChart>  
+              <Area type="monotone" dataKey="newCases" stroke="#82ca9d" fillOpacity={1} fill="url(#colorCases)" />
+              <Area type="monotone" dataKey="newDeaths" stroke="#8884d8" fillOpacity={1} fill="url(#colorDeaths)" />
+              <Area type="monotone" dataKey="newRecovered" stroke="red" fillOpacity={1} fill="url(#colorRecovered)" />
+            </AreaChart>  
           </ResponsiveContainer>
         </div>
       )}
