@@ -10,6 +10,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Dashboard from './pages/dashboard';
 import Daily from './pages/daily';
+import Ranking from './pages/ranking';
 
 const history = createBrowserHistory();
 
@@ -28,6 +29,7 @@ const Root = () => {
       <Context.Provider value={{ state, dispatch }}>
         <Switch>
           <Route path="/daily" component={Daily} />
+          <Route path="/ranking" component={Ranking} />
           <Route exact path="/" component={Dashboard} />
         </Switch>
       </Context.Provider>

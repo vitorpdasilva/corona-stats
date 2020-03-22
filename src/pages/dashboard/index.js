@@ -111,15 +111,15 @@ const Dashboard = ({ history, location }) => {
   const filterCountries = () => {
     if (!COUNTRIES_LIST) return <p>Loading countries...</p>
     return (
-      <>
-        <p>Filter:</p>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <p style={{ margin: '0 10px 0 0' }}>Filter:</p>
         <select value={selectedCountry} onChange={e => selectCountry(e.target.value)}>
           <option value="">GLOBAL</option>
           {COUNTRIES_LIST.map((i, index) => (
             <option key={index} value={i.code}>{i.name}</option>
           ))}
         </select>
-      </>
+      </div>
     )
   }
   
@@ -152,9 +152,11 @@ const Dashboard = ({ history, location }) => {
         </>
       )}
       <Divider />
-      <Divider hidden />
       <h3>How the <strong>global</strong> outbreak evolved from the day 20/01/2020 until today</h3>
       <Link to="/daily"><Button primary>See Charts &rarr;</Button></Link>
+      <Divider />
+      <h3>Check the ranking of the most affected countries</h3>
+      <Link to="/ranking"><Button primary>Ranking &rarr;</Button></Link>
       <Divider hidden />
       {stats && <small>Last Update: {parseISO(stats.lastUpdate).toLocaleDateString('EN-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</small> }
     </DashboardWrapper>

@@ -69,7 +69,7 @@ const LastCases = ({ country, timeRange }) => {
   }
   if (!loading && chartData) {
     return (
-      <div style={{ width: '500px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-20px' }}>
+      <div style={{ width: '700px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-20px' }}>
         <ResponsiveContainer>
           <AreaChart data={chartData}>
             <defs>
