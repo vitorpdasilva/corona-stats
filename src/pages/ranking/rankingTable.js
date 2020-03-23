@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Flag } from 'semantic-ui-react';
 import './style.css';
 
 const useSortableData = (items, config = null) => {
@@ -73,12 +72,21 @@ const RankingTable = (props) => {
               </button>
             </th>
             <th>
+            <button
+                type="button"
+                onClick={() => requestSort('mortality')}
+                className={getClassNamesFor('mortality')}
+              >
+                Mortality
+              </button>
+            </th>
+            <th>
               <button
                 type="button"
                 onClick={() => requestSort('recovered')}
                 className={getClassNamesFor('recovered')}
               >
-                Recovered
+                Recover
               </button>
             </th>
             <th>
@@ -95,9 +103,10 @@ const RankingTable = (props) => {
         <tbody>
           {items.map(item => (
             <tr key={Math.random()}>
-              <td><Flag name={item.country.toLowerCase()} />{item.country}</td>
+              <td>{item.country}</td>
               <td>{item.confirmed}</td>
               <td>{item.deaths}</td>
+              <td>{(Math.round(item.deaths * 100) / item.confirmed).toFixed(1)}%</td>
               <td>{item.recovered}</td>
               <td>{item.active}</td>
             </tr>
