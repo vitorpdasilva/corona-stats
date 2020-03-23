@@ -47,72 +47,74 @@ const RankingTable = (props) => {
   return (
     <>
       <Link to="/">&larr; Back to data and filters</Link>
-      <table>
-        <thead>
-          <tr>
-            <th>
-              Country
-            </th>
-            <th>
+      <div style={{ width: '100%', overflow: 'auto' }}>
+        <table>
+          <thead>
+            <tr>
+              <th style={{ position: 'sticky', left: 0, background: 'white' }}>
+                Country
+              </th>
+              <th>
+                <button
+                  type="button"
+                  onClick={() => requestSort('confirmed')}
+                  className={getClassNamesFor('confirmed')}
+                >
+                  Confirmed
+                </button>
+              </th>
+              <th>
+                <button
+                  type="button"
+                  onClick={() => requestSort('deaths')}
+                  className={getClassNamesFor('deaths')}
+                >
+                  Deaths
+                </button>
+              </th>
+              <th>
               <button
-                type="button"
-                onClick={() => requestSort('confirmed')}
-                className={getClassNamesFor('confirmed')}
-              >
-                Confirmed
-              </button>
-            </th>
-            <th>
-              <button
-                type="button"
-                onClick={() => requestSort('deaths')}
-                className={getClassNamesFor('deaths')}
-              >
-                Deaths
-              </button>
-            </th>
-            <th>
-            <button
-                type="button"
-                onClick={() => requestSort('mortality')}
-                className={getClassNamesFor('mortality')}
-              >
-                Mortality
-              </button>
-            </th>
-            <th>
-              <button
-                type="button"
-                onClick={() => requestSort('recovered')}
-                className={getClassNamesFor('recovered')}
-              >
-                Recover
-              </button>
-            </th>
-            <th>
-              <button
-                type="button"
-                onClick={() => requestSort('active')}
-                className={getClassNamesFor('active')}
-              >
-                Active
-              </button>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map(item => (
-            <tr key={Math.random()}>
-              <td>{item.country}</td>
-              <td>{item.confirmed}</td>
-              <td>{item.deaths}</td>
-              <td>{(Math.round(item.deaths * 100) / item.confirmed).toFixed(1)}%</td>
-              <td>{item.recovered}</td>
-              <td>{item.active}</td>
+                  type="button"
+                  onClick={() => requestSort('mortality')}
+                  className={getClassNamesFor('mortality')}
+                >
+                  Mortality
+                </button>
+              </th>
+              <th>
+                <button
+                  type="button"
+                  onClick={() => requestSort('recovered')}
+                  className={getClassNamesFor('recovered')}
+                >
+                  Recover
+                </button>
+              </th>
+              <th>
+                <button
+                  type="button"
+                  onClick={() => requestSort('active')}
+                  className={getClassNamesFor('active')}
+                >
+                  Active
+                </button>
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {items.map(item => (
+              <tr key={Math.random()}>
+                <td style={{ position: 'sticky', left: 0, background: 'white' }}>{item.country}</td>
+                <td>{item.confirmed}</td>
+                <td>{item.deaths}</td>
+                <td>{(Math.round(item.deaths * 100) / item.confirmed).toFixed(1)}%</td>
+                <td>{item.recovered}</td>
+                <td>{item.active}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };
