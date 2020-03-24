@@ -25,7 +25,7 @@ const Ranking = () => {
           tableData[index].deaths = deaths;
           tableData[index].recovered = recovered;
           tableData[index].active = active;
-          tableData[index].mortality = (Math.round(deaths * 100) / confirmed).toFixed(1);
+          tableData[index].mortality = parseFloat((Math.round(deaths * 100) / confirmed).toFixed(1));
         })
       })
       setCountryData(tableData);
