@@ -30,7 +30,7 @@ const Daily = () => {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="reportDateString" />
+            <XAxis dataKey="reportDate" />
             <YAxis />
             <Legend />
             <Tooltip />
@@ -52,7 +52,7 @@ const Daily = () => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="reportDateString" />
+          <XAxis dataKey="reportDate" />
           <YAxis />
           <Legend />
           <Tooltip />
