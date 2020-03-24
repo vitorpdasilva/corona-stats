@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { parseISO } from 'date-fns';
+import _ from 'lodash';
 import { Divider, Statistic, Loader, Flag, Accordion, Icon, Dropdown, Button } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import DashboardWrapper from './styles';
@@ -34,8 +35,9 @@ const Dashboard = ({ history, location }) => {
         setMessage(null)
         const resStats = await fetch(`${API_URL}${selectedCountry ? `/countries/${selectedCountry}` : ''}`).then(data => data.json())
         const deathStats = await fetch(resStats.deaths.detail).then(data => data.json());
+        const deathsGrouped = _.groupBy(deathStats, 'provinceState');
         setStats(resStats);
-        setDeaths(deathStats)
+        setDeaths(formatGroupedDeaths(deathsGrouped))
       } catch (err) {
         console.log(err);
         setMessage("No case registered")
@@ -50,6 +52,19 @@ const Dashboard = ({ history, location }) => {
     const country = getParameterByName('country', location.search);
     setSelectedCountry(country);
   }, [location.search])
+
+  const formatGroupedDeaths = deathsGrouped => {
+    const formatedData = [];
+    Object.entries(deathsGrouped).map((states, index) => {
+      formatedData.push({ state: states[0] });
+      let deaths = 0;
+      states[1].map(entry => {
+        deaths += parseInt(entry.deaths);
+        formatedData[index].deaths = deaths;
+      })
+    })
+    return formatedData;
+  };
 
   const selectCountry = (country) => {
     const countryParam = country ? `?country=${country}` : '';
@@ -78,24 +93,24 @@ const Dashboard = ({ history, location }) => {
               <Statistic.Label>Recovered</Statistic.Label>
             </Statistic>
           </Statistic.Group>
-          {deaths && deaths.length > 0 && selectedCountry && !loading && (
+          {deaths && selectedCountry && !loading && (
             <>
+              {console.log(deaths)}
               <Divider hidden />
               <Flag name={selectedCountry.toLowerCase()} /> Where the deaths happened
               <Accordion fluid styled>
                 {deaths.map((i, index) => (
-                  <div key={i.provinceState || i.countryRegion}>
+                  <div key={index}>
                     <Accordion.Title
                       active={activeAccordionIndex === index}
                       index={index}
                       onClick={() => setActiveAccordionIndex(index)}
                     >
                       <Icon name='dropdown' />
-                      {i.provinceState ? i.provinceState : 'Province or State not provided'}
+                      {i.state && i.state !== 'null' ? i.state : 'Province or State not provided'}
                     </Accordion.Title>
                     <Accordion.Content active={activeAccordionIndex === index}>
                       Confirmed deaths: {i.deaths} <br />
-                      Active cases: {i.active}
                     </Accordion.Content>
                   </div>
                 ))}
