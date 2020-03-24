@@ -95,7 +95,6 @@ const Dashboard = ({ history, location }) => {
           </Statistic.Group>
           {deaths && selectedCountry && !loading && (
             <>
-              {console.log(deaths)}
               <Divider hidden />
               <Flag name={selectedCountry.toLowerCase()} /> Where the deaths happened
               <Accordion fluid styled>
@@ -117,7 +116,6 @@ const Dashboard = ({ history, location }) => {
               </Accordion>
             </>
           )}
-          
         </>
       )}
     </>
