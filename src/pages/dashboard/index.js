@@ -106,13 +106,17 @@ const Dashboard = ({ history, location }) => {
             </Statistic>
             <Statistic>
               <Statistic.Value>{!recovered || loading ?<Loader active inline size='mini'/> : recovered.total}</Statistic.Value>
-              <Statistic.Label><DiscreteButton onClick={() => setShowDetail('recovered')}>Recovered</DiscreteButton></Statistic.Label>
+              <Statistic.Label><DiscreteButton>Recovered</DiscreteButton></Statistic.Label>
             </Statistic>
           </Statistic.Group>
-          {!confirmed || !deaths || !recovered || !selectedCountry && <Loader active inline size='mini'/>}
-          {showDetail === 'confirmed' && <ConfirmedDetails confirmed={confirmed} selectedCountry={selectedCountry} /> }
-          {showDetail === 'deaths' && <DeathsDetail deaths={deaths} selectedCountry={selectedCountry} /> }
-          {showDetail === 'recovered' && <RecoveredDetails recovered={recovered} selectedCountry={selectedCountry} /> }
+          {selectedCountry && (
+            <>
+              {!confirmed || !deaths || !recovered || loading && <Loader active inline size='mini'/>}
+              {showDetail === 'confirmed' && <ConfirmedDetails confirmed={confirmed} selectedCountry={selectedCountry} /> }
+              {showDetail === 'deaths' && <DeathsDetail deaths={deaths} selectedCountry={selectedCountry} /> }
+              {showDetail === 'recovered' && <RecoveredDetails recovered={recovered} selectedCountry={selectedCountry} /> }
+            </>
+          )}
         </>
       )}
     </>
