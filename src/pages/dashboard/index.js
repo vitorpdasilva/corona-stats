@@ -94,17 +94,28 @@ const Dashboard = ({ history, location }) => {
       {message ? (
         <h3>{message}</h3>
       ) : (
-        <>
-          <Statistic.Group size="tiny">
-            <Statistic>
+        <div style={{ position: 'relative' }}>
+          
+          <Statistic.Group 
+            size="tiny"
+            style={{
+              width: '100%',
+              maxWidth: '600px',
+              display: 'flex',
+              margin: '0',
+              marginTop: '15px',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Statistic style={{ margin: 0 }}>
               <Statistic.Value>{!confirmed || loading ? <Loader active inline size='mini'/> : confirmed.total}</Statistic.Value>
               <Statistic.Label><DiscreteButton onClick={() => setShowDetail('confirmed')}>Confirmed</DiscreteButton></Statistic.Label>
             </Statistic>
-            <Statistic>
+            <Statistic style={{ margin: 0 }}>
               <Statistic.Value>{!deaths || loading ? <Loader active inline size='mini'/> : deaths.total}</Statistic.Value>
               <Statistic.Label><DiscreteButton onClick={() => setShowDetail('deaths')}>Deaths</DiscreteButton></Statistic.Label>
             </Statistic>
-            <Statistic>
+            <Statistic style={{ margin: 0 }}>
               <Statistic.Value>{!recovered || loading ?<Loader active inline size='mini'/> : recovered.total}</Statistic.Value>
               <Statistic.Label><DiscreteButton>Recovered</DiscreteButton></Statistic.Label>
             </Statistic>
@@ -117,7 +128,7 @@ const Dashboard = ({ history, location }) => {
               {showDetail === 'recovered' && <RecoveredDetails recovered={recovered} selectedCountry={selectedCountry} /> }
             </>
           )}
-        </>
+        </div>
       )}
     </>
   )
