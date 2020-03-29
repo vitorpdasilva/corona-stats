@@ -2,17 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { parseISO } from 'date-fns';
 import _ from 'lodash';
-import { Divider, Statistic, Loader, Flag, Accordion, Icon, Dropdown, Button } from 'semantic-ui-react'
+import { Divider, Statistic, Loader, Dropdown, Button } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
+import DiscreteButton from '../../components/discreteButton';
 import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
 import LastCases from './LastCases';
+import DeathsDetail from './deathsDetail';
+import ConfirmedDetails from './confirmedDetails';
+import RecoveredDetails from './recoveredDetails';
 
 const Dashboard = ({ history, location }) => {
   const [selectedCountry, setSelectedCountry] = useState();
   const [loading, setLoading] = useState(false);
-  const [activeAccordionIndex, setActiveAccordionIndex] = useState(0)
   const [stats] = useState();
+  const [lastUpdate, setLastUpdate] = useState();
+  const [showDetail, setShowDetail] = useState('deaths');
   const [deaths, setDeaths] = useState();
   const [recovered, setRecovered] = useState();
   const [confirmed, setConfirmed] = useState();
@@ -93,40 +98,21 @@ const Dashboard = ({ history, location }) => {
           <Statistic.Group size="tiny">
             <Statistic>
               <Statistic.Value>{!confirmed || loading ? <Loader active inline size='mini'/> : confirmed.total}</Statistic.Value>
-              <Statistic.Label>Confirmed</Statistic.Label>
+              <Statistic.Label><DiscreteButton onClick={() => setShowDetail('confirmed')}>Confirmed</DiscreteButton></Statistic.Label>
             </Statistic>
             <Statistic>
               <Statistic.Value>{!deaths || loading ? <Loader active inline size='mini'/> : deaths.total}</Statistic.Value>
-              <Statistic.Label>Deaths</Statistic.Label>
+              <Statistic.Label><DiscreteButton onClick={() => setShowDetail('deaths')}>Deaths</DiscreteButton></Statistic.Label>
             </Statistic>
             <Statistic>
               <Statistic.Value>{!recovered || loading ?<Loader active inline size='mini'/> : recovered.total}</Statistic.Value>
-              <Statistic.Label>Recovered</Statistic.Label>
+              <Statistic.Label><DiscreteButton onClick={() => setShowDetail('recovered')}>Recovered</DiscreteButton></Statistic.Label>
             </Statistic>
           </Statistic.Group>
-          {deaths && selectedCountry && !loading && (
-            <>
-              <Divider hidden />
-              <Flag name={selectedCountry.toLowerCase()} /> Where the deaths happened
-              <Accordion fluid styled>
-                {deaths.map((i, index) => (
-                  <div key={index}>
-                    <Accordion.Title
-                      active={activeAccordionIndex === index}
-                      index={index}
-                      onClick={() => setActiveAccordionIndex(index)}
-                    >
-                      <Icon name='dropdown' />
-                      {i.state && i.state !== 'null' ? i.state : 'Province or State not provided'}
-                    </Accordion.Title>
-                    <Accordion.Content active={activeAccordionIndex === index}>
-                      Confirmed deaths: {i.deaths} <br />
-                    </Accordion.Content>
-                  </div>
-                ))}
-              </Accordion>
-            </>
-          )}
+          {!confirmed || !deaths || !recovered || !selectedCountry && <Loader active inline size='mini'/>}
+          {showDetail === 'confirmed' && <ConfirmedDetails confirmed={confirmed} selectedCountry={selectedCountry} /> }
+          {showDetail === 'deaths' && <DeathsDetail deaths={deaths} selectedCountry={selectedCountry} /> }
+          {showDetail === 'recovered' && <RecoveredDetails recovered={recovered} selectedCountry={selectedCountry} /> }
         </>
       )}
     </>
