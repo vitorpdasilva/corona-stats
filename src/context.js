@@ -1,8 +1,7 @@
 import { createContext } from 'react';
 
 const Context = createContext({
-  selectedCountry: null,
-  deathsDetail: null,
+  dailyData: [],
 });
 
 export default Context;

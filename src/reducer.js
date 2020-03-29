@@ -1,14 +1,9 @@
 export default function reducer(state, { type, payload }) {
   switch (type) {
-    case "SELECTED_COUNTRY":
+    case "DAILY_DATA":
       return {
         ...state,
-        selectedCountry: payload,
-      }
-    case "DEATH_DETAIL":
-      return {
-        ...state,
-        deathsDetail: payload,
+        dailyData: payload,
       }
     default:
       return state;

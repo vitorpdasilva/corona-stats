@@ -15,7 +15,6 @@ import RecoveredDetails from './recoveredDetails';
 const Dashboard = ({ history, location }) => {
   const [selectedCountry, setSelectedCountry] = useState();
   const [loading, setLoading] = useState(false);
-  const [stats] = useState();
   const [lastUpdate, setLastUpdate] = useState();
   const [showDetail, setShowDetail] = useState('deaths');
   const [deaths, setDeaths] = useState();
@@ -48,10 +47,10 @@ const Dashboard = ({ history, location }) => {
         const deathsGrouped = _.groupBy(deaths, 'provinceState');
         const confirmedGrouped = _.groupBy(confirmed, 'provinceState');
         const recoveredGrouped = _.groupBy(recovered, 'provinceState');
-
         setConfirmed(formatGroupedData(confirmedGrouped, 'confirmed'))
         setRecovered(formatGroupedData(recoveredGrouped, 'recovered'))
         setDeaths(formatGroupedData(deathsGrouped, 'deaths'))
+        setLastUpdate(resStats.lastUpdate)
       } catch (err) {
         console.log(err);
         setMessage("No case registered")
@@ -95,7 +94,6 @@ const Dashboard = ({ history, location }) => {
         <h3>{message}</h3>
       ) : (
         <div style={{ position: 'relative' }}>
-          
           <Statistic.Group 
             size="tiny"
             style={{
@@ -183,7 +181,7 @@ const Dashboard = ({ history, location }) => {
       <h3>Check the ranking of the most affected countries</h3>
       <Link to="/ranking"><Button primary>Ranking &rarr;</Button></Link>
       <Divider hidden />
-      {stats && <small>Last Update: {parseISO(stats.lastUpdate).toLocaleDateString('EN-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</small> }
+      {lastUpdate && <small>Last Update: {parseISO(lastUpdate).toLocaleDateString('EN-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</small> }
     </DashboardWrapper>
   )
 }
