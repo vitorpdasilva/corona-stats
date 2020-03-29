@@ -39,7 +39,6 @@ const useSortableData = (items, config = null) => {
 
 const RankingTable = (props) => {
   const { items, requestSort, sortConfig } = useSortableData(props.data);
-  console.log(items);
   const getClassNamesFor = (name) => {
     if (!sortConfig) {
       return;
