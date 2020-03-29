@@ -42,9 +42,9 @@ const LastCases = ({ country, timeRange }) => {
         })
         formatedData.forEach((i, index) => {
           if (index > 0) {
-            formatedData[index].newCases = Number(i.confirmed) - Number(formatedData[index - 1].confirmed)
-            formatedData[index].newDeaths = Number(i.deaths) - Number(formatedData[index - 1].deaths)
-            formatedData[index].newRecovered = Number(i.recovered) - Number(formatedData[index - 1].recovered)
+            formatedData[index].newCases = Math.abs(Number(i.confirmed) - Number(formatedData[index - 1].confirmed))
+            formatedData[index].newDeaths = Math.abs(Number(i.deaths) - Number(formatedData[index - 1].deaths))
+            formatedData[index].newRecovered = Math.abs(Number(i.recovered) - Number(formatedData[index - 1].recovered))
           }
         })
         setChartData(formatedData);

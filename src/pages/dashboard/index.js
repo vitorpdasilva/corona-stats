@@ -12,8 +12,10 @@ const Dashboard = ({ history, location }) => {
   const [selectedCountry, setSelectedCountry] = useState();
   const [loading, setLoading] = useState(false);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0)
-  const [stats, setStats] = useState();
+  const [stats] = useState();
   const [deaths, setDeaths] = useState();
+  const [recovered, setRecovered] = useState();
+  const [confirmed, setConfirmed] = useState();
   const [message, setMessage] = useState();
   const [timeRange, setTimeRange] = useState(10)
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
@@ -34,10 +36,17 @@ const Dashboard = ({ history, location }) => {
         setLoading(true);
         setMessage(null)
         const resStats = await fetch(`${API_URL}${selectedCountry ? `/countries/${selectedCountry}` : ''}`).then(data => data.json())
-        const deathStats = await fetch(resStats.deaths.detail).then(data => data.json());
-        const deathsGrouped = _.groupBy(deathStats, 'provinceState');
-        setStats(resStats);
-        setDeaths(formatGroupedDeaths(deathsGrouped))
+        const deaths = await fetch(resStats.deaths.detail).then(data => data.json());
+        const confirmed = await fetch(resStats.confirmed.detail).then(data => data.json());
+        const recovered = await fetch(resStats.recovered.detail).then(data => data.json())
+        
+        const deathsGrouped = _.groupBy(deaths, 'provinceState');
+        const confirmedGrouped = _.groupBy(confirmed, 'provinceState');
+        const recoveredGrouped = _.groupBy(recovered, 'provinceState');
+
+        setConfirmed(formatGroupedData(confirmedGrouped, 'confirmed'))
+        setRecovered(formatGroupedData(recoveredGrouped, 'recovered'))
+        setDeaths(formatGroupedData(deathsGrouped, 'deaths'))
       } catch (err) {
         console.log(err);
         setMessage("No case registered")
@@ -53,16 +62,18 @@ const Dashboard = ({ history, location }) => {
     setSelectedCountry(country);
   }, [location.search])
 
-  const formatGroupedDeaths = deathsGrouped => {
+  const formatGroupedData = (grouped, type) => {
     const formatedData = [];
-    Object.entries(deathsGrouped).forEach((states, index) => {
+    Object.entries(grouped).forEach((states, index) => {
       formatedData.push({ state: states[0] });
-      let deaths = 0;
+      let key = 0;
+      
       states[1].forEach(entry => {
-        deaths += parseInt(entry.deaths);
-        formatedData[index].deaths = deaths;
+        key += parseInt(entry[type]);
+        formatedData[index][type] = key;
       })
     })
+    formatedData.total = _.sumBy(formatedData, type);
     return formatedData;
   };
 
@@ -81,15 +92,15 @@ const Dashboard = ({ history, location }) => {
         <>
           <Statistic.Group size="tiny">
             <Statistic>
-              <Statistic.Value>{!stats || loading ? <Loader active inline size='mini'/> : stats.confirmed.value}</Statistic.Value>
+              <Statistic.Value>{!confirmed || loading ? <Loader active inline size='mini'/> : confirmed.total}</Statistic.Value>
               <Statistic.Label>Confirmed</Statistic.Label>
             </Statistic>
             <Statistic>
-              <Statistic.Value>{!stats || loading ? <Loader active inline size='mini'/> : stats.deaths.value}</Statistic.Value>
+              <Statistic.Value>{!deaths || loading ? <Loader active inline size='mini'/> : deaths.total}</Statistic.Value>
               <Statistic.Label>Deaths</Statistic.Label>
             </Statistic>
             <Statistic>
-              <Statistic.Value>{!stats || loading ?<Loader active inline size='mini'/> : stats.recovered.value}</Statistic.Value>
+              <Statistic.Value>{!recovered || loading ?<Loader active inline size='mini'/> : recovered.total}</Statistic.Value>
               <Statistic.Label>Recovered</Statistic.Label>
             </Statistic>
           </Statistic.Group>
