@@ -18,7 +18,8 @@ const Daily = () => {
   function BuildChart() {
     return (
       <>
-        <h3>Total confirmed cases vs Number of recovereds</h3>
+        {console.log(dataChart)}
+        <h3>Total confirmed cases</h3>
         <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
           <ResponsiveContainer>
           <AreaChart
@@ -35,7 +36,7 @@ const Daily = () => {
             <Legend />
             <Tooltip />
             <Area type="monotone" dataKey="totalConfirmed" stroke="#8884d8" fill="#8884d8" />
-            <Area type="monotone" dataKey="totalRecovered" stroke="#7ca48b" fill="#82ca9d" />
+            {/* <Area type="monotone" dataKey="totalRecovered" stroke="#7ca48b" fill="#82ca9d" /> */}
           </AreaChart>
           </ResponsiveContainer>
         </div>
