@@ -108,7 +108,9 @@ const RankingTable = (props) => {
                 <td style={{ position: 'sticky', left: 0, background: 'white' }}>
                   <div style={{ width: 20, float: 'left' }}>{Number(index + 1)}</div>
                   <Flag name={item.country.toLowerCase()} />
-                  {item.country}
+                  <Link to={`/?country=${item.iso2}`}>
+                    {item.country}
+                  </Link>
                 </td>
                 <td>{item.confirmed}</td>
                 <td>{item.deaths}</td>
