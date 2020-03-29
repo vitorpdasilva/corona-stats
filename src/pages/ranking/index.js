@@ -16,11 +16,12 @@ const Ranking = () => {
         let recovered = 0;
         let active = 0;
         tableData.push({ country: country[0] })
-        country[1].map(i => {
-          confirmed += i.confirmed; 
+        country[1].forEach(i => {
+          confirmed += i.confirmed;
           deaths += i.deaths;
           recovered += i.recovered;
           active += i.active;
+          tableData[index].iso2 = i.iso2;
           tableData[index].confirmed = confirmed;
           tableData[index].deaths = deaths;
           tableData[index].recovered = recovered;

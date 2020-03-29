@@ -16,8 +16,9 @@ const LastCases = ({ country, timeRange }) => {
         setLoading(true);
         for (let i = timeRange; i > 0; i -= 1) {
           const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
-          if (country === 'United States') country = 'US';
-          const dataFilter =  data.filter(i => i.countryRegion === country)
+          let testCountry = country;
+          if (country === 'United States') testCountry = 'US';
+          const dataFilter =  data.filter(i => i.countryRegion === testCountry)
           entireData.push(dataFilter);
         }
         if (entireData) {
@@ -26,12 +27,12 @@ const LastCases = ({ country, timeRange }) => {
           return;
         }
         const formatedData = [];
-        entireData.map(dailyEntry => {
+        entireData.forEach(dailyEntry => {
           let confirmed = 0;
           let deaths = 0;
           let recovered = 0;
           if (dailyEntry.length) {
-            dailyEntry.map((i, index) => {
+            dailyEntry.forEach((i, index) => {
               confirmed += parseInt(i.confirmed);
               deaths += parseInt(i.deaths);
               recovered += parseInt(i.recovered);
@@ -39,7 +40,7 @@ const LastCases = ({ country, timeRange }) => {
             formatedData.push({ confirmed, deaths, recovered, lastUpdate: dailyEntry[0].lastUpdate });
           }
         })
-        formatedData.map((i, index) => {
+        formatedData.forEach((i, index) => {
           if (index > 0) {
             formatedData[index].newCases = Number(i.confirmed) - Number(formatedData[index - 1].confirmed)
             formatedData[index].newDeaths = Number(i.deaths) - Number(formatedData[index - 1].deaths)
@@ -54,11 +55,12 @@ const LastCases = ({ country, timeRange }) => {
       }
     }
     fetchLastCases()
-}, [country, timeRange]);
+  }, [country, timeRange]);
+
   if (!country) return <span></span>;
   if (loading) {
     return (
-      
+
         <Segment>
         <Dimmer active inverted>
           <Loader inverted>Loading</Loader>
@@ -94,7 +96,7 @@ const LastCases = ({ country, timeRange }) => {
             <Area type="monotone" dataKey="newCases" stroke="#82ca9d" fillOpacity={1} fill="url(#colorCases)" />
             <Area type="monotone" dataKey="newDeaths" stroke="red" fillOpacity={1} fill="url(#colorDeaths)" />
             <Area type="monotone" dataKey="newRecovered" stroke="#8884d8" fillOpacity={1} fill="url(#colorRecovered)" />
-          </AreaChart>  
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     )

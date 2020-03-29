@@ -44,7 +44,7 @@ const Dashboard = ({ history, location }) => {
       } finally {
         setLoading(false);
       }
-    } 
+    }
     fetchStats();
   }, [selectedCountry]);
 
@@ -55,10 +55,10 @@ const Dashboard = ({ history, location }) => {
 
   const formatGroupedDeaths = deathsGrouped => {
     const formatedData = [];
-    Object.entries(deathsGrouped).map((states, index) => {
+    Object.entries(deathsGrouped).forEach((states, index) => {
       formatedData.push({ state: states[0] });
       let deaths = 0;
-      states[1].map(entry => {
+      states[1].forEach(entry => {
         deaths += parseInt(entry.deaths);
         formatedData[index].deaths = deaths;
       })
@@ -120,7 +120,7 @@ const Dashboard = ({ history, location }) => {
       )}
     </>
   )
-  
+
   const filterCountries = () => {
     if (!COUNTRIES_LIST) return <p>Loading countries...</p>
     return (
@@ -135,7 +135,7 @@ const Dashboard = ({ history, location }) => {
       </div>
     )
   }
-  
+
   return (
     <DashboardWrapper>
       <h2 className="title">{selectedCountry ? selectedCountryFullName[0].name : "GLOBAL"}</h2>
@@ -147,19 +147,19 @@ const Dashboard = ({ history, location }) => {
           <div>
             How the virus is spreading in the past&nbsp;
             <strong>
-              <Dropdown 
+              <Dropdown
                 upward
                 floating
                 inline
                 options={timeRangeOpts}
                 defaultValue={timeRange}
                 onChange={e => setTimeRange(e.target.textContent)}
-              /> 
+              />
               days
             </strong>
           </div>
-          <LastCases 
-            country={selectedCountry ? selectedCountryFullName[0].name : ''} 
+          <LastCases
+            country={selectedCountry ? selectedCountryFullName[0].name : ''}
             timeRange={timeRange}
           />
         </>
