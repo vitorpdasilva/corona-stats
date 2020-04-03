@@ -9,6 +9,7 @@ import Context from '../../context';
 import DiscreteButton from '../../components/discreteButton';
 import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
+import formatThousands from '../../helpers/formatThousand';
 import LastCases from './LastCases';
 import DeathsDetail from './deathsDetail';
 import ConfirmedDetails from './confirmedDetails';
@@ -114,15 +115,15 @@ const Dashboard = ({ history, location }) => {
             }}
           >
             <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{!confirmed || loading ? <Loader active inline size='mini'/> : confirmed.total}</Statistic.Value>
+              <Statistic.Value>{!confirmed || loading ? <Loader active inline size='mini'/> : formatThousands(confirmed.total)}</Statistic.Value>
               <Statistic.Label><DiscreteButton onClick={() => setShowDetail('confirmed')}>Confirmed</DiscreteButton></Statistic.Label>
             </Statistic>
             <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{!deaths || loading ? <Loader active inline size='mini'/> : deaths.total}</Statistic.Value>
+              <Statistic.Value>{!deaths || loading ? <Loader active inline size='mini'/> : formatThousands(deaths.total)}</Statistic.Value>
               <Statistic.Label><DiscreteButton onClick={() => setShowDetail('deaths')}>Deaths</DiscreteButton></Statistic.Label>
             </Statistic>
             <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{!recovered || loading ?<Loader active inline size='mini'/> : recovered.total}</Statistic.Value>
+              <Statistic.Value>{!recovered || loading ?<Loader active inline size='mini'/> : formatThousands(recovered.total)}</Statistic.Value>
               <Statistic.Label><DiscreteButton>Recovered</DiscreteButton></Statistic.Label>
             </Statistic>
           </Statistic.Group>
