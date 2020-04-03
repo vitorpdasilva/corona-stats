@@ -4,7 +4,7 @@ import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react';
 import Context from '../../context';
 import { API_URL } from '../../constants';
 import PlaceholderImage from '../../imgs/short-paragraph.png'
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, ComposedChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line } from 'recharts';
 
 const LastCases = ({ country, timeRange }) => {
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ const LastCases = ({ country, timeRange }) => {
       if (!country) return <span></span>;
       try {
         setLoading(true);
-        for (let i = 30; i > 0; i -= 1) {
+        for (let i = timeRange; i > 0; i -= 1) {
           const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
           let testCountry = country;
           if (country === 'United States') testCountry = 'US';
@@ -31,6 +31,7 @@ const LastCases = ({ country, timeRange }) => {
           let recovered = 0;
           if (dailyEntry.length) {
             dailyEntry.forEach((i, index) => {
+              console.log(i.active)
               confirmed += parseInt(i.confirmed);
               deaths += parseInt(i.deaths);
               recovered += parseInt(i.recovered);
@@ -71,7 +72,7 @@ const LastCases = ({ country, timeRange }) => {
     return (
       <div style={{ width: '700px', maxWidth: '90%', height: 300, marginTop: '25px', marginLeft: '-20px' }}>
         <ResponsiveContainer>
-          <AreaChart data={chartData}>
+          <ComposedChart data={chartData}>
             <defs>
               <linearGradient id="colorCases" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
@@ -94,7 +95,7 @@ const LastCases = ({ country, timeRange }) => {
             <Area type="monotone" dataKey="newCases" stroke="#82ca9d" fillOpacity={1} fill="url(#colorCases)" />
             <Area type="monotone" dataKey="newDeaths" stroke="red" fillOpacity={1} fill="url(#colorDeaths)" />
             <Area type="monotone" dataKey="newRecovered" stroke="#8884d8" fillOpacity={1} fill="url(#colorRecovered)" />
-          </AreaChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
     )

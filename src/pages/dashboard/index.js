@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
 import { parseISO } from 'date-fns';
 import _ from 'lodash';
 import { lightFormat, subDays } from 'date-fns';
-import { Divider, Statistic, Loader, Button } from 'semantic-ui-react'
+import { Divider, Statistic, Loader } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import Context from '../../context';
 import DiscreteButton from '../../components/discreteButton';
@@ -25,7 +24,7 @@ const Dashboard = ({ history, location }) => {
   const [recovered, setRecovered] = useState();
   const [confirmed, setConfirmed] = useState();
   const [message, setMessage] = useState();
-  const [timeRange] = useState(30)
+  const [timeRange] = useState(15)
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
   
   useEffect(() => {
@@ -169,18 +168,13 @@ const Dashboard = ({ history, location }) => {
               {timeRange} days
             </strong>
           </div>
-          {/* <LastCases
+          <LastCases
             country={selectedCountry ? selectedCountryFullName[0].name : ''}
             timeRange={timeRange}
-          /> */}
+          />
         </>
       )}
       <Divider />
-      <h3>How the <strong>global</strong> outbreak evolved from the day 20/01/2020 until today</h3>
-      <Link to="/daily"><Button primary>See Charts &rarr;</Button></Link>
-      <Divider />
-      <h3>Check the ranking of the most affected countries</h3>
-      <Link to="/ranking"><Button primary>Ranking &rarr;</Button></Link>
       <Divider hidden />
       {lastUpdate && <small>Last Update: {parseISO(lastUpdate).toLocaleDateString('EN-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</small> }
     </DashboardWrapper>
