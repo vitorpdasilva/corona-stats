@@ -1,11 +1,20 @@
 import React from 'react';
-import { Icon } from 'semantic-ui-react';
-const Header = () => (
+import { Segment, Icon } from 'semantic-ui-react';
+const Header = ({ onClick }) => (
   <header 
-    style={{ display: 'flex', alignItems: 'center', padding: '20px', paddingBottom: 0 }}
+    
   >
-    <Icon name="dna" /> 
-    <h2 style={{ marginTop: '5px' }}>Numbers and data related to Corona Virus (Covid-19)</h2>
+    <Segment 
+      style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        padding: '20px',
+      }}
+    >
+      <Icon size="big" name="bars" onClick={() => onClick()} />
+      
+      <h2 style={{ margin: 0, marginLeft: '15px' }}>Numbers and data related to Corona Virus (Covid-19)</h2>
+    </Segment>
   </header>
     
 );

@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { lightFormat, subDays } from 'date-fns';
-import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react'
+import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react';
+import Context from '../../context';
 import { API_URL } from '../../constants';
 import PlaceholderImage from '../../imgs/short-paragraph.png'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 const LastCases = ({ country, timeRange }) => {
   const [loading, setLoading] = useState(false);
+  const { state: { dailyData } } = useContext(Context);
   const [chartData, setChartData] = useState([]);
   useEffect(() => {
     const fetchLastCases = async () => {
@@ -14,18 +16,14 @@ const LastCases = ({ country, timeRange }) => {
       if (!country) return <span></span>;
       try {
         setLoading(true);
-        for (let i = timeRange; i > 0; i -= 1) {
+        for (let i = 30; i > 0; i -= 1) {
           const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
           let testCountry = country;
           if (country === 'United States') testCountry = 'US';
           const dataFilter =  data.filter(i => i.countryRegion === testCountry)
           entireData.push(dataFilter);
         }
-        if (entireData) {
-        } else {
-          setChartData([])
-          return;
-        }
+        
         const formatedData = [];
         entireData.forEach(dailyEntry => {
           let confirmed = 0;

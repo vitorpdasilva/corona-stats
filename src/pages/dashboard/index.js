@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { parseISO } from 'date-fns';
 import _ from 'lodash';
-import { Divider, Statistic, Loader, Dropdown, Button } from 'semantic-ui-react'
+import { lightFormat, subDays } from 'date-fns';
+import { Divider, Statistic, Loader, Button } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
+import Context from '../../context';
 import DiscreteButton from '../../components/discreteButton';
 import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
@@ -13,6 +15,7 @@ import ConfirmedDetails from './confirmedDetails';
 import RecoveredDetails from './recoveredDetails';
 
 const Dashboard = ({ history, location }) => {
+  const { dispatch, state: { dailyData } } = useContext(Context);
   const [selectedCountry, setSelectedCountry] = useState();
   const [loading, setLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState();
@@ -21,16 +24,9 @@ const Dashboard = ({ history, location }) => {
   const [recovered, setRecovered] = useState();
   const [confirmed, setConfirmed] = useState();
   const [message, setMessage] = useState();
-  const [timeRange, setTimeRange] = useState(10)
+  const [timeRange] = useState(30)
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
-  const timeRangeOpts = [
-    { key: 5, text: 5, value: 5 },
-    { key: 10, text: 10, value: 10 },
-    { key: 15, text: 15, value: 15 },
-    { key: 20, text: 20, value: 20 },
-    { key: 30, text: 30, value: 30 },
-  ]
-
+  
   useEffect(() => {
     const fetchStats = async () => {
       if (selectedCountry === undefined && getParameterByName('country')) {
@@ -65,6 +61,18 @@ const Dashboard = ({ history, location }) => {
     const country = getParameterByName('country', location.search);
     setSelectedCountry(country);
   }, [location.search])
+
+  useEffect(() => {
+    const fetchDailyData = async () => {
+      const rawDailyData = dailyData;
+      for (let i = 30; i > 0; i -= 1) {
+        const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
+        rawDailyData.push(data)
+      }
+      dispatch({ type: 'DAILY_DATA', payload: rawDailyData })
+    }
+    fetchDailyData();
+  }, [dispatch]) //eslint-disable-line
 
   const formatGroupedData = (grouped, type) => {
     const formatedData = [];
@@ -157,21 +165,13 @@ const Dashboard = ({ history, location }) => {
           <div>
             How the virus is spreading in the past&nbsp;
             <strong>
-              <Dropdown
-                upward
-                floating
-                inline
-                options={timeRangeOpts}
-                defaultValue={timeRange}
-                onChange={e => setTimeRange(e.target.textContent)}
-              />
-              days
+              {timeRange} days
             </strong>
           </div>
-          <LastCases
+          {/* <LastCases
             country={selectedCountry ? selectedCountryFullName[0].name : ''}
             timeRange={timeRange}
-          />
+          /> */}
         </>
       )}
       <Divider />
