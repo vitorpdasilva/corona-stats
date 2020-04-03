@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Divider } from 'semantic-ui-react';
 import { API_URL } from '../../constants';
-import { AreaChart, Legend, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ComposedChart, Line, Legend, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 
 const Daily = () => {
@@ -18,50 +18,34 @@ const Daily = () => {
   function BuildChart() {
     return (
       <>
-        <h3>Total confirmed cases</h3>
-        <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
-          <ResponsiveContainer>
-          <AreaChart
-            width={500}
-            height={400}
-            data={dataChart}
-            margin={{
-              top: 10, right: 30, left: 0, bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="reportDate" />
-            <YAxis />
-            <Legend />
-            <Tooltip />
-            <Area type="monotone" dataKey="totalConfirmed" stroke="#8884d8" fill="#8884d8" />
-            {/* <Area type="monotone" dataKey="totalRecovered" stroke="#7ca48b" fill="#82ca9d" /> */}
-          </AreaChart>
-          </ResponsiveContainer>
-        </div>
-        <Divider />
         <h3>Outbreak Mainland China vs Other countries</h3>
         <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
-        <ResponsiveContainer>
-        <AreaChart
-          width={500}
-          height={400}
-          data={dataChart}
-          margin={{
-            top: 10, right: 30, left: 0, bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="reportDate" />
-          <YAxis />
-          <Legend />
-          <Tooltip />
-          <Area type="monotone" dataKey="mainlandChina" stroke="#7ca48b" fill="#82ca9d" />
-          <Area type="monotone" dataKey="otherLocations" stroke="#ffc658" fill="#ffc658" />
-        </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </>
+          <ResponsiveContainer>
+            <ComposedChart
+              width={500}
+              height={400}
+              data={dataChart}
+              margin={{
+                top: 10, right: 30, left: 0, bottom: 0,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="reportDate" />
+              <YAxis />
+              <Legend />
+              <Tooltip />
+              <Area type="monotone" dataKey="mainlandChina" stroke="#7ca48b" fill="#82ca9d" />
+              <Area type="monotone" dataKey="otherLocations" stroke="#ffc658" fill="#ffc658" />
+              <Line type="monotone" dataKey="totalConfirmed" stroke="#ff7300" dot={false} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+        {/* <h3>Total confirmed cases</h3> */}
+        <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
+        </div>
+        <Divider />
+        
+      </>
     )
   }
 
