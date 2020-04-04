@@ -12,6 +12,7 @@ const LastCases = ({ country, timeRange }) => {
   const { state: { dailyData } } = useContext(Context);
   const [chartData, setChartData] = useState([]);
   useEffect(() => {
+    console.log({ dailyData });
     const fetchLastCases = async () => {
       const entireData = [];
       if (!country) return <span></span>;
@@ -20,7 +21,7 @@ const LastCases = ({ country, timeRange }) => {
         let testCountry = country;
         // for (let i = timeRange; i > 0; i -= 1) {
         //   const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
-        //   if (country === 'United States') testCountry = 'US';
+          if (country === 'United States') testCountry = 'US';
         //   // const dataFilter = _.flatten(dailyData).filter(i => i.countryRegion === testCountry)
         //   const dataFilter = data.filter(i => i.countryRegion === testCountry) //eslint-disable-line
         //   entireData.push(dataFilter);
@@ -29,8 +30,6 @@ const LastCases = ({ country, timeRange }) => {
           const dataFilter = i.filter(entry => entry.countryRegion === testCountry) 
           entireData.push(dataFilter)
         });
-
-        console.log({ entireData })
         
         const formatedData = [];
         entireData.forEach(dailyEntry => {
