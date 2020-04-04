@@ -65,7 +65,7 @@ const Dashboard = ({ history, location }) => {
   useEffect(() => {
     const fetchDailyData = async () => {
       const rawDailyData = dailyData;
-      for (let i = 30; i > 0; i -= 1) {
+      for (let i = timeRange; i > 0; i -= 1) {
         const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
         rawDailyData.push(data)
       }
@@ -126,7 +126,7 @@ const Dashboard = ({ history, location }) => {
               <Statistic.Label><DiscreteButton>Recovered</DiscreteButton></Statistic.Label>
             </Statistic>
           </Statistic.Group>
-          {selectedCountry && (
+          {selectedCountry && !loading && (
             <>
               {!confirmed || !deaths || !recovered || loading && <Loader active inline size='mini'/>}
               {showDetail === 'confirmed' && <ConfirmedDetails confirmed={confirmed} selectedCountry={selectedCountry} /> }

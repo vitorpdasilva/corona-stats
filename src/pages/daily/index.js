@@ -40,11 +40,7 @@ const Daily = () => {
             </ComposedChart>
           </ResponsiveContainer>
         </div>
-        {/* <h3>Total confirmed cases</h3> */}
-        <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
-        </div>
         <Divider />
-        
       </>
     )
   }

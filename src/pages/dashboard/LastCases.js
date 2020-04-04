@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
+import _ from 'lodash';
 import { lightFormat, subDays } from 'date-fns';
 import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react';
 import Context from '../../context';
 import { API_URL } from '../../constants';
 import PlaceholderImage from '../../imgs/short-paragraph.png'
-import { ResponsiveContainer, ComposedChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line } from 'recharts';
+import { ResponsiveContainer, ComposedChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 const LastCases = ({ country, timeRange }) => {
   const [loading, setLoading] = useState(false);
@@ -14,29 +15,36 @@ const LastCases = ({ country, timeRange }) => {
     const fetchLastCases = async () => {
       const entireData = [];
       if (!country) return <span></span>;
-      try {
-        setLoading(true);
-        for (let i = timeRange; i > 0; i -= 1) {
-          const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
-          let testCountry = country;
-          if (country === 'United States') testCountry = 'US';
-          const dataFilter =  data.filter(i => i.countryRegion === testCountry)
-          entireData.push(dataFilter);
-        }
+      // try {
+        // setLoading(true);
+        let testCountry = country;
+        // for (let i = timeRange; i > 0; i -= 1) {
+        //   const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
+        //   if (country === 'United States') testCountry = 'US';
+        //   // const dataFilter = _.flatten(dailyData).filter(i => i.countryRegion === testCountry)
+        //   const dataFilter = data.filter(i => i.countryRegion === testCountry) //eslint-disable-line
+        //   entireData.push(dataFilter);
+        // }
+        dailyData.map(i => {
+          const dataFilter = i.filter(entry => entry.countryRegion === testCountry) 
+          entireData.push(dataFilter)
+        });
+
+        console.log({ entireData })
         
         const formatedData = [];
         entireData.forEach(dailyEntry => {
           let confirmed = 0;
           let deaths = 0;
           let recovered = 0;
+          let active = 0;
           if (dailyEntry.length) {
             dailyEntry.forEach((i, index) => {
-              console.log(i.active)
               confirmed += parseInt(i.confirmed);
               deaths += parseInt(i.deaths);
               recovered += parseInt(i.recovered);
             });
-            formatedData.push({ confirmed, deaths, recovered, lastUpdate: dailyEntry[0].lastUpdate });
+            formatedData.push({ active, confirmed, deaths, recovered, lastUpdate: dailyEntry[0].lastUpdate });
           }
         })
         formatedData.forEach((i, index) => {
@@ -47,14 +55,15 @@ const LastCases = ({ country, timeRange }) => {
           }
         })
         setChartData(formatedData);
-      } catch (err) {
-        console.log({ err });
-      } finally {
-        setLoading(false);
-      }
-    }
+      } 
+      // catch (err) {
+      //   console.log({ err });
+      // } finally {
+      //   setLoading(false);
+      // }
+    // }
     fetchLastCases()
-  }, [country, timeRange]);
+  }, [country, dailyData]);
 
   if (!country) return <span></span>;
   if (loading) {
