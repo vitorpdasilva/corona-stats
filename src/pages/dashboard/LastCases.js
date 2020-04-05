@@ -16,59 +16,44 @@ const LastCases = ({ country, timeRange }) => {
     const fetchLastCases = async () => {
       const entireData = [];
       if (!country) return <span></span>;
-      // try {
-        // setLoading(true);
-        let testCountry = country;
-        // for (let i = timeRange; i > 0; i -= 1) {
-        //   const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
-          if (country === 'United States') testCountry = 'US';
-        //   // const dataFilter = _.flatten(dailyData).filter(i => i.countryRegion === testCountry)
-        //   const dataFilter = data.filter(i => i.countryRegion === testCountry) //eslint-disable-line
-        //   entireData.push(dataFilter);
-        // }
-        dailyData.map(i => {
-          const dataFilter = i.filter(entry => entry.countryRegion === testCountry) 
-          entireData.push(dataFilter)
-        });
+      let testCountry = country;
+      if (country === 'United States') testCountry = 'US';
+      dailyData.map(i => {
+        const dataFilter = i.filter(entry => entry.countryRegion === testCountry) 
+        entireData.push(dataFilter)
+      });
         
-        const formatedData = [];
-        entireData.forEach(dailyEntry => {
-          let confirmed = 0;
-          let deaths = 0;
-          let recovered = 0;
-          let active = 0;
-          if (dailyEntry.length) {
-            dailyEntry.forEach((i, index) => {
-              confirmed += parseInt(i.confirmed);
-              deaths += parseInt(i.deaths);
-              recovered += parseInt(i.recovered);
-            });
-            formatedData.push({ active, confirmed, deaths, recovered, lastUpdate: dailyEntry[0].lastUpdate });
-          }
-        })
-        formatedData.forEach((i, index) => {
-          if (index > 0) {
-            formatedData[index].newCases = Math.abs(Number(i.confirmed) - Number(formatedData[index - 1].confirmed))
-            formatedData[index].newDeaths = Math.abs(Number(i.deaths) - Number(formatedData[index - 1].deaths))
-            formatedData[index].newRecovered = Math.abs(Number(i.recovered) - Number(formatedData[index - 1].recovered))
-          }
-        })
-        setChartData(formatedData);
-      } 
-      // catch (err) {
-      //   console.log({ err });
-      // } finally {
-      //   setLoading(false);
-      // }
-    // }
+      const formatedData = [];
+      entireData.forEach(dailyEntry => {
+        let confirmed = 0;
+        let deaths = 0;
+        let recovered = 0;
+        let active = 0;
+        if (dailyEntry.length) {
+          dailyEntry.forEach((i, index) => {
+            confirmed += parseInt(i.confirmed);
+            deaths += parseInt(i.deaths);
+            recovered += parseInt(i.recovered);
+          });
+          formatedData.push({ active, confirmed, deaths, recovered, lastUpdate: dailyEntry[0].lastUpdate });
+        }
+      })
+      formatedData.forEach((i, index) => {
+        if (index > 0) {
+          formatedData[index].newCases = Math.abs(Number(i.confirmed) - Number(formatedData[index - 1].confirmed))
+          formatedData[index].newDeaths = Math.abs(Number(i.deaths) - Number(formatedData[index - 1].deaths))
+          formatedData[index].newRecovered = Math.abs(Number(i.recovered) - Number(formatedData[index - 1].recovered))
+        }
+      })
+      setChartData(formatedData);
+    }
     fetchLastCases()
   }, [country, dailyData]);
 
   if (!country) return <span></span>;
   if (loading) {
     return (
-
-        <Segment>
+      <Segment>
         <Dimmer active inverted>
           <Loader inverted>Loading</Loader>
         </Dimmer>
@@ -108,9 +93,9 @@ const LastCases = ({ country, timeRange }) => {
       </div>
     )
   }
-  if (!loading && !chartData) {
+  if (loading || !chartData) {
     return (
-      <span></span>
+      <Loader size="small" />
     )
   }
 }
