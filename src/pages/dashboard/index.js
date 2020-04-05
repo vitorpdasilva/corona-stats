@@ -24,7 +24,7 @@ const Dashboard = ({ history, location }) => {
   
   useEffect(() => {
     const fetchStats = async () => {
-      if (!selectedCountry) {
+      if (!selectedCountry && !getParameterByName('country')) {
         setLoading(true);
         const ipData = await fetch(`https://api.ipdata.co/?api-key=${IP_DATA_KEY}`).then(data => data.json());
         setSelectedCountry(ipData.country_code);
