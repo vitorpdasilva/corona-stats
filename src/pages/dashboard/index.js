@@ -3,7 +3,7 @@ import { parseISO } from 'date-fns';
 import _ from 'lodash';
 import { lightFormat, subDays } from 'date-fns';
 import { Divider, Statistic, Loader, Popup, Icon } from 'semantic-ui-react'
-import { API_URL, COUNTRIES_LIST } from '../../constants';
+import { API_URL, COUNTRIES_LIST, IP_DATA_KEY } from '../../constants';
 import Context from '../../context';
 import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
@@ -24,6 +24,13 @@ const Dashboard = ({ history, location }) => {
   
   useEffect(() => {
     const fetchStats = async () => {
+      if (!selectedCountry) {
+        setLoading(true);
+        const ipData = await fetch(`https://api.ipdata.co/?api-key=${IP_DATA_KEY}`).then(data => data.json());
+        setSelectedCountry(ipData.country_code);
+        setLoading(false);
+        return
+      }
       if (selectedCountry === undefined && getParameterByName('country')) {
         return;
       }
