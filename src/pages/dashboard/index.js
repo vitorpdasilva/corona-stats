@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { parseISO } from 'date-fns';
 import _ from 'lodash';
 import { lightFormat, subDays } from 'date-fns';
-import { Divider, Statistic, Loader } from 'semantic-ui-react'
+import { Divider, Statistic, Loader, Popup, Icon } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import Context from '../../context';
 import DashboardWrapper from './styles';
@@ -120,7 +120,16 @@ const Dashboard = ({ history, location }) => {
               <Statistic.Label>Deaths</Statistic.Label>
             </Statistic>
             <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{!detail || loading ?<Loader active inline size='mini'/> : formatThousands(detail.totalRecovered)}</Statistic.Value>
+              <Statistic.Value>
+                {!detail || loading ?<Loader active inline size='mini'/> : formatThousands(detail.totalRecovered)}&nbsp;&nbsp;
+                {detail.totalRecovered < 1 && (
+                  <Popup 
+                    trigger={<Icon name='info circle' size="tiny" />}
+                    content={`Some countries does not provide the number of recovered and ${selectedCountryFullName[0].name} seems to one of them`}
+                    size='small'
+                  />
+                )}
+              </Statistic.Value>
               <Statistic.Label>Recovered</Statistic.Label>
             </Statistic>
           </Statistic.Group>
