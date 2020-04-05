@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Divider, Flag, Accordion, Icon, Loader } from 'semantic-ui-react'
 
-const DeathsDetail = ({ deaths, selectedCountry, detail }) => {
+const DeathsDetail = ({ selectedCountry, detail }) => {
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0)
   if (!selectedCountry || !detail) return <Loader active inline size='mini'/>;
   return (
     <>
       <Divider hidden />
-      <Flag name={selectedCountry.toLowerCase()} /> Where the <strong>deaths</strong> happened
+      <Flag name={selectedCountry.toLowerCase()} /> Where the <strong>cases</strong> happened
       <Accordion fluid styled>
         {detail.map((i, index) => (
           <div key={index}>

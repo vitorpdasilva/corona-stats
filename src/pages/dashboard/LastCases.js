@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Dimmer, Loader, Image, Segment } from 'semantic-ui-react';
+import { Dimmer, Loader, Image, Segment, Icon } from 'semantic-ui-react';
 import Context from '../../context';
 import PlaceholderImage from '../../imgs/short-paragraph.png'
 import { ResponsiveContainer, ComposedChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
-const LastCases = ({ country, timeRange }) => {
+const LastCases = ({ country }) => {
   const { state: { dailyData } } = useContext(Context);
   const [chartData, setChartData] = useState([]);
   useEffect(() => {
@@ -51,7 +51,7 @@ const LastCases = ({ country, timeRange }) => {
     return (
       <Segment>
         <Dimmer active inverted>
-          <Loader inverted>Loading</Loader>
+          <Loader inverted>Loading <br />It's lots of data to be fetched <Icon name="meh" size="normal" /></Loader>
         </Dimmer>
         <Image src={PlaceholderImage} />
       </Segment>

@@ -9,7 +9,7 @@ import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
 import formatThousands from '../../helpers/formatThousand';
 import LastCases from './LastCases';
-import DeathsDetail from './deathsDetail';
+import Details from './Details';
 
 const Dashboard = ({ history, location }) => {
   const { dispatch } = useContext(Context);
@@ -19,7 +19,7 @@ const Dashboard = ({ history, location }) => {
   const [detail, setDetail] = useState([])
   const [showDetail, setShowDetail] = useState(false);
   const [message, setMessage] = useState();
-  const [timeRange] = useState(15)
+  const [timeRange] = useState(30)
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
   
   useEffect(() => {
@@ -130,7 +130,9 @@ const Dashboard = ({ history, location }) => {
               <Statistic.Value>
                 {!detail || loading ?<Loader active inline size='mini'/> : formatThousands(detail.totalRecovered)}&nbsp;&nbsp;
                 {detail.totalRecovered < 1 && (
-                  <Popup 
+                  <Popup
+                    basic
+                    hideOnScroll
                     trigger={<Icon name='info circle' size="tiny" />}
                     content={`Some countries does not provide the number of recovered and ${selectedCountryFullName[0].name} seems to one of them`}
                     size='small'
@@ -143,7 +145,7 @@ const Dashboard = ({ history, location }) => {
           {selectedCountry && selectedCountry !== "GLOBAL" && (
             <>
               {!detail || loading && <Loader active inline size='mini'/>}
-              {showDetail && <DeathsDetail detail={detail} selectedCountry={selectedCountry} /> }
+              {showDetail && <Details detail={detail} selectedCountry={selectedCountry} /> }
             </>
           )}
         </div>
@@ -168,7 +170,6 @@ const Dashboard = ({ history, location }) => {
 
   return (
     <DashboardWrapper>
-      {console.log({ selectedCountry })}
       <h2 className="title">{selectedCountry && selectedCountry !== "GLOBAL" ? selectedCountryFullName[0].name : "GLOBAL"}</h2>
       {filterCountries()}
       {buildStats()}
