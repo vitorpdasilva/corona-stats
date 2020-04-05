@@ -37,7 +37,7 @@ const Dashboard = ({ history, location }) => {
       try {
         setLoading(true);
         setMessage(null)
-        const resStats = await fetch(`${API_URL}${selectedCountry ? `/countries/${selectedCountry}` : ''}`).then(data => data.json())
+        const resStats = await fetch(`${API_URL}${selectedCountry && selectedCountry !== "GLOBAL" ? `/countries/${selectedCountry}` : '' }`).then(data => data.json())
         const details = await fetch(resStats.deaths.detail).then(data => data.json());
         
         const detailsGrouped = _.groupBy(details, 'provinceState');
@@ -140,7 +140,7 @@ const Dashboard = ({ history, location }) => {
               <Statistic.Label>Recovered</Statistic.Label>
             </Statistic>
           </Statistic.Group>
-          {selectedCountry && (
+          {selectedCountry && selectedCountry !== "GLOBAL" && (
             <>
               {!detail || loading && <Loader active inline size='mini'/>}
               {showDetail && <DeathsDetail detail={detail} selectedCountry={selectedCountry} /> }
@@ -156,7 +156,7 @@ const Dashboard = ({ history, location }) => {
     return (
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <p style={{ margin: '0 10px 0 0' }}>Filter:</p>
-        <select value={selectedCountry} onChange={e => selectCountry(e.target.value)}>
+        <select value={selectedCountry} onChange={e => e.target.value ? selectCountry(e.target.value) : selectCountry("GLOBAL")}>
           <option value="">GLOBAL</option>
           {COUNTRIES_LIST.map((i, index) => (
             <option key={index} value={i.code}>{i.name}</option>
@@ -168,11 +168,12 @@ const Dashboard = ({ history, location }) => {
 
   return (
     <DashboardWrapper>
-      <h2 className="title">{selectedCountry ? selectedCountryFullName[0].name : "GLOBAL"}</h2>
+      {console.log({ selectedCountry })}
+      <h2 className="title">{selectedCountry && selectedCountry !== "GLOBAL" ? selectedCountryFullName[0].name : "GLOBAL"}</h2>
       {filterCountries()}
       {buildStats()}
       <Divider hidden />
-      {!message && selectedCountry && (
+      {!message && selectedCountry && selectedCountry !== "GLOBAL" && (
         <>
           <div>
             How the virus is spreading in the past&nbsp;
@@ -181,7 +182,7 @@ const Dashboard = ({ history, location }) => {
             </strong>
           </div>
           <LastCases
-            country={selectedCountry ? selectedCountryFullName[0].name : ''}
+            country={selectedCountry && selectedCountry !== "GLOBAL" ? selectedCountryFullName[0].name : ''}
             timeRange={timeRange}
           />
         </>
