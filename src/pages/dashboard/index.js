@@ -5,24 +5,19 @@ import { lightFormat, subDays } from 'date-fns';
 import { Divider, Statistic, Loader } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST } from '../../constants';
 import Context from '../../context';
-import DiscreteButton from '../../components/discreteButton';
 import DashboardWrapper from './styles';
 import getParameterByName from '../../helpers/getQueryParam';
 import formatThousands from '../../helpers/formatThousand';
 import LastCases from './LastCases';
 import DeathsDetail from './deathsDetail';
-import ConfirmedDetails from './confirmedDetails';
-import RecoveredDetails from './recoveredDetails';
 
 const Dashboard = ({ history, location }) => {
-  const { dispatch, state: { dailyData } } = useContext(Context);
+  const { dispatch } = useContext(Context);
   const [selectedCountry, setSelectedCountry] = useState();
   const [loading, setLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState();
-  const [showDetail, setShowDetail] = useState('deaths');
-  const [deaths, setDeaths] = useState();
-  const [recovered, setRecovered] = useState();
-  const [confirmed, setConfirmed] = useState();
+  const [detail, setDetail] = useState([])
+  const [showDetail, setShowDetail] = useState(false);
   const [message, setMessage] = useState();
   const [timeRange] = useState(15)
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
@@ -36,17 +31,13 @@ const Dashboard = ({ history, location }) => {
         setLoading(true);
         setMessage(null)
         const resStats = await fetch(`${API_URL}${selectedCountry ? `/countries/${selectedCountry}` : ''}`).then(data => data.json())
-        const deaths = await fetch(resStats.deaths.detail).then(data => data.json());
-        const confirmed = await fetch(resStats.confirmed.detail).then(data => data.json());
-        const recovered = await fetch(resStats.recovered.detail).then(data => data.json())
+        const details = await fetch(resStats.deaths.detail).then(data => data.json());
         
-        const deathsGrouped = _.groupBy(deaths, 'provinceState');
-        const confirmedGrouped = _.groupBy(confirmed, 'provinceState');
-        const recoveredGrouped = _.groupBy(recovered, 'provinceState');
-        setConfirmed(formatGroupedData(confirmedGrouped, 'confirmed'))
-        setRecovered(formatGroupedData(recoveredGrouped, 'recovered'))
-        setDeaths(formatGroupedData(deathsGrouped, 'deaths'))
+        const detailsGrouped = _.groupBy(details, 'provinceState');
+        
+        setDetail(formatGroupedData(detailsGrouped));
         setLastUpdate(resStats.lastUpdate)
+        setShowDetail(true)
       } catch (err) {
         console.log(err);
         setMessage("No case registered")
@@ -64,8 +55,8 @@ const Dashboard = ({ history, location }) => {
 
   useEffect(() => {
     const fetchDailyData = async () => {
-      const rawDailyData = dailyData;
-      for (let i = 30; i > 0; i -= 1) {
+      const rawDailyData = [];
+      for (let i = timeRange; i > 0; i -= 1) {
         const data = await fetch(`${API_URL}/daily/${lightFormat(subDays(new Date(), i), 'MM-dd-yyyy')}`).then(data => data.json());
         rawDailyData.push(data)
       }
@@ -74,18 +65,25 @@ const Dashboard = ({ history, location }) => {
     fetchDailyData();
   }, [dispatch]) //eslint-disable-line
 
-  const formatGroupedData = (grouped, type) => {
+  const formatGroupedData = (grouped) => {
     const formatedData = [];
     Object.entries(grouped).forEach((states, index) => {
       formatedData.push({ state: states[0] });
-      let key = 0;
-      
+      let deaths = 0;
+      let confirmed = 0;
+      let recovered = 0;
       states[1].forEach(entry => {
-        key += parseInt(entry[type]);
-        formatedData[index][type] = key;
+        deaths += parseInt(entry.deaths);
+        confirmed += parseInt(entry.confirmed);
+        recovered += parseInt(entry.recovered);
+        formatedData[index].deaths = deaths;
+        formatedData[index].confirmed = confirmed;
+        formatedData[index].recovered = recovered;
       })
     })
-    formatedData.total = _.sumBy(formatedData, type);
+    formatedData.totalDeaths = _.sumBy(formatedData, 'deaths');
+    formatedData.totalConfirmed = _.sumBy(formatedData, 'confirmed');
+    formatedData.totalRecovered = _.sumBy(formatedData, 'recovered');
     return formatedData;
   };
 
@@ -114,24 +112,22 @@ const Dashboard = ({ history, location }) => {
             }}
           >
             <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{!confirmed || loading ? <Loader active inline size='mini'/> : formatThousands(confirmed.total)}</Statistic.Value>
-              <Statistic.Label><DiscreteButton onClick={() => setShowDetail('confirmed')}>Confirmed</DiscreteButton></Statistic.Label>
+              <Statistic.Value>{!detail || loading ? <Loader active inline size='mini'/> : formatThousands(detail.totalConfirmed)}</Statistic.Value>
+              <Statistic.Label>Confirmed</Statistic.Label>
             </Statistic>
             <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{!deaths || loading ? <Loader active inline size='mini'/> : formatThousands(deaths.total)}</Statistic.Value>
-              <Statistic.Label><DiscreteButton onClick={() => setShowDetail('deaths')}>Deaths</DiscreteButton></Statistic.Label>
+              <Statistic.Value>{!detail || loading ? <Loader active inline size='mini'/> : formatThousands(detail.totalDeaths)}</Statistic.Value>
+              <Statistic.Label>Deaths</Statistic.Label>
             </Statistic>
             <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{!recovered || loading ?<Loader active inline size='mini'/> : formatThousands(recovered.total)}</Statistic.Value>
-              <Statistic.Label><DiscreteButton>Recovered</DiscreteButton></Statistic.Label>
+              <Statistic.Value>{!detail || loading ?<Loader active inline size='mini'/> : formatThousands(detail.totalRecovered)}</Statistic.Value>
+              <Statistic.Label>Recovered</Statistic.Label>
             </Statistic>
           </Statistic.Group>
           {selectedCountry && (
             <>
-              {!confirmed || !deaths || !recovered || loading && <Loader active inline size='mini'/>}
-              {showDetail === 'confirmed' && <ConfirmedDetails confirmed={confirmed} selectedCountry={selectedCountry} /> }
-              {showDetail === 'deaths' && <DeathsDetail deaths={deaths} selectedCountry={selectedCountry} /> }
-              {showDetail === 'recovered' && <RecoveredDetails recovered={recovered} selectedCountry={selectedCountry} /> }
+              {!detail || loading && <Loader active inline size='mini'/>}
+              {showDetail && <DeathsDetail detail={detail} selectedCountry={selectedCountry} /> }
             </>
           )}
         </div>
