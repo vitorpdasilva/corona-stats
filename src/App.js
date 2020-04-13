@@ -11,7 +11,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Dashboard from './pages/dashboard';
 import Daily from './pages/daily';
-import Ranking from './pages/ranking';
+import Stats from './pages/stats';
 
 const history = createBrowserHistory();
 
@@ -42,9 +42,9 @@ const Root = () => {
             <Icon name='home' />
             Dashboard
           </Menu.Item>
-          <Menu.Item as='a' href="/ranking">
+          <Menu.Item as='a' href="/stats">
             <Icon name='table' />
-            Ranking
+            Stats
           </Menu.Item>
           <Menu.Item as='a' href="/daily">
             <Icon name='chart line' />
@@ -56,7 +56,7 @@ const Root = () => {
           <Context.Provider value={{ state, dispatch }}>
             <Switch>
               <Route path="/daily" component={Daily} />
-              <Route path="/ranking" component={Ranking} />
+              <Route path="/stats" component={Stats} />
               <Route exact path="/" component={Dashboard} />
             </Switch>
           </Context.Provider>

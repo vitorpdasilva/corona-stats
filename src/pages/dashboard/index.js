@@ -144,7 +144,7 @@ const Dashboard = ({ history, location }) => {
           </Statistic.Group>
           {selectedCountry && selectedCountry !== "GLOBAL" && (
             <>
-              {!detail || loading && <Loader active inline size='mini'/>}
+              {!detail || (loading && <Loader active inline size='mini'/>)}
               {showDetail && <Details detail={detail} selectedCountry={selectedCountry} /> }
             </>
           )}
