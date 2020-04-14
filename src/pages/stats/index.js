@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { API_URL } from '../../constants';
-import RankingTable from './rankingTable';
+import StatsTable from './statsTable';
 
-const Ranking = () => {
+const Stats = () => {
   const [ countryData, setCountryData ] = useState();
   useEffect(() => {
-    const fetchRanking = async () => {
+    const fetchStats = async () => {
       const data = await fetch(`${API_URL}/deaths`).then(data => data.json());
       const grouped = _.groupBy(data, 'countryRegion');
       const tableData = [];
@@ -31,14 +31,14 @@ const Ranking = () => {
       })
       setCountryData(tableData);
     }
-    fetchRanking();
+    fetchStats();
   }, []);
   if (!countryData) return <p>loading...</p>
   return (
     <div style={{ padding: 20 }}>
-      <RankingTable data={countryData} />
+      <StatsTable data={countryData} />
     </div>
   )
 };
 
-export default Ranking;
+export default Stats;

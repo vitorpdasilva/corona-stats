@@ -11,10 +11,10 @@ const useSortableData = (items, config = null) => {
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
+          return sortConfig.direction === 'ascending' ? 1 :- 1;
         }
         if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
+          return sortConfig.direction === 'ascending' ? -1 : 1;
         }
         return 0;
       });
@@ -37,7 +37,7 @@ const useSortableData = (items, config = null) => {
   return { items: sortedItems, requestSort, sortConfig };
 };
 
-const RankingTable = (props) => {
+const StatsTable = (props) => {
   const { items, requestSort, sortConfig } = useSortableData(props.data);
   const getClassNamesFor = (name) => {
     if (!sortConfig) {
@@ -126,4 +126,4 @@ const RankingTable = (props) => {
   );
 };
 
-export default RankingTable;
+export default StatsTable;
