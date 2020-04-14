@@ -51,7 +51,7 @@ const LastCases = ({ country }) => {
     return (
       <Segment>
         <Dimmer active inverted>
-          <Loader inverted>Loading <br />It's lots of data to be fetched <Icon name="meh" size="normal" /></Loader>
+          <Loader inverted>Loading <br />It's lots of data to be fetched <Icon name="meh" size="large" /></Loader>
         </Dimmer>
         <Image src={PlaceholderImage} />
       </Segment>

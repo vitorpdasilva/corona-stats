@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { parseISO } from 'date-fns';
+import { parseISO, lightFormat, subDays } from 'date-fns';
 import _ from 'lodash';
-import { lightFormat, subDays } from 'date-fns';
 import { Divider, Statistic, Loader, Popup, Icon } from 'semantic-ui-react'
 import { API_URL, COUNTRIES_LIST, IP_DATA_KEY } from '../../constants';
 import Context from '../../context';
@@ -119,16 +118,21 @@ const Dashboard = ({ history, location }) => {
             }}
           >
             <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{!detail || loading ? <Loader active inline size='mini'/> : formatThousands(detail.totalConfirmed)}</Statistic.Value>
+              <Statistic.Value>{(!detail || loading) ? <Loader active inline size='mini'/> : formatThousands(detail.totalConfirmed)}</Statistic.Value>
               <Statistic.Label>Confirmed</Statistic.Label>
             </Statistic>
             <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{!detail || loading ? <Loader active inline size='mini'/> : formatThousands(detail.totalDeaths)}</Statistic.Value>
+              <Statistic.Value>{(!detail || loading) ? <Loader active inline size='mini'/> : formatThousands(detail.totalDeaths)}</Statistic.Value>
               <Statistic.Label>Deaths</Statistic.Label>
             </Statistic>
             <Statistic style={{ margin: 0 }}>
               <Statistic.Value>
-                {!detail || loading ?<Loader active inline size='mini'/> : formatThousands(detail.totalRecovered)}&nbsp;&nbsp;
+                {(!detail || loading) ? (
+                  <Loader active inline size='mini'/>
+                ) : (
+                  formatThousands(detail.totalRecovered)
+                )}
+                &nbsp;&nbsp;
                 {detail.totalRecovered < 1 && (
                   <Popup
                     basic
@@ -144,7 +148,7 @@ const Dashboard = ({ history, location }) => {
           </Statistic.Group>
           {selectedCountry && selectedCountry !== "GLOBAL" && (
             <>
-              {!detail || loading && <Loader active inline size='mini'/>}
+              {(!detail || loading) && <Loader active inline size='mini'/>}
               {showDetail && <Details detail={detail} selectedCountry={selectedCountry} /> }
             </>
           )}

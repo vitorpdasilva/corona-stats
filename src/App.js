@@ -12,6 +12,7 @@ import Footer from './Footer';
 import Dashboard from './pages/dashboard';
 import Daily from './pages/daily';
 import Ranking from './pages/ranking';
+import Compare from './pages/compare';
 
 const history = createBrowserHistory();
 
@@ -55,6 +56,7 @@ const Root = () => {
           <Header onClick={() => setVisible(!visible)} />
           <Context.Provider value={{ state, dispatch }}>
             <Switch>
+              <Route path="/compare" component={Compare} />
               <Route path="/daily" component={Daily} />
               <Route path="/ranking" component={Ranking} />
               <Route exact path="/" component={Dashboard} />
