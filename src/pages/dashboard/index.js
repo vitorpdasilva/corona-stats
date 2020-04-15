@@ -20,7 +20,7 @@ const Dashboard = ({ history, location }) => {
   const [message, setMessage] = useState();
   const [timeRange] = useState(30)
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
-  
+
   useEffect(() => {
     const fetchStats = async () => {
       if (!selectedCountry && !getParameterByName('country')) {
@@ -132,7 +132,6 @@ const Dashboard = ({ history, location }) => {
                 ) : (
                   formatThousands(detail.totalRecovered)
                 )}
-                &nbsp;&nbsp;
                 {detail.totalRecovered < 1 && (
                   <Popup
                     basic
@@ -148,11 +147,7 @@ const Dashboard = ({ history, location }) => {
           </Statistic.Group>
           {selectedCountry && selectedCountry !== "GLOBAL" && (
             <>
-<<<<<<< HEAD
-              {(!detail || loading) && <Loader active inline size='mini'/>}
-=======
               {!detail || (loading && <Loader active inline size='mini'/>)}
->>>>>>> 04c18e024b22ed01d35479738fca0e1bfc80f82e
               {showDetail && <Details detail={detail} selectedCountry={selectedCountry} /> }
             </>
           )}
