@@ -3,9 +3,12 @@ import { Link } from 'react-router-dom';
 import { Divider } from 'semantic-ui-react';
 import { API_URL } from '../../constants';
 import { ComposedChart, Line, Legend, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import moment from 'moment';
+
 
 
 const Daily = () => {
+  /* Setup */
   const [ dataChart, setDataChart ] = useState();
   useEffect(() => {
     async function fetchDailyData() {
@@ -14,6 +17,28 @@ const Daily = () => {
     }
     fetchDailyData();
   }, []);
+
+  const [ timelineData, setTimelineData ] = useState();
+  useEffect(() => {
+    getTimelineData()
+  })
+
+  /* Functions */
+  async function getTimelineData() {
+    const initialDate = moment('2020-01-01')
+    let currentDate = initialDate
+    const asyncOperations = []
+    while (!currentDate.isSame(moment(), 'day')) {
+      asyncOperations.push(getDataForDay(currentDate))
+      currentDate.add(1, 'day')
+    }
+    const rawData = await Promise.all(asyncOperations)
+    console.log(rawData)
+  }
+
+  async function getDataForDay(date) {
+    return fetch(`${API_URL}/daily/${date.format("M-D-YYYY")}`).then(data => data.json());
+  }
 
   function BuildChart() {
     return (
