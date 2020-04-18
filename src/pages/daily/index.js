@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Divider } from 'semantic-ui-react';
 import { API_URL } from '../../constants';
-import { ComposedChart, Line, Legend, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ComposedChart, Line, Legend, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart } from 'recharts';
 import moment from 'moment';
 
-
+const LOCATION_LEVEL = Object.freeze({
+  CITY: 1,
+  PROVINCE: 2,
+  COUNTRY: 3,
+})
+const ALIASES = Object.freeze({
+  China: "Mainland China",
+})
 const initialDate = moment('2020-01-01')
 
 const Daily = () => {
@@ -18,17 +25,17 @@ const Daily = () => {
       setDataChart(res);
     }
     fetchDailyData();
-    getDeathsTimelineData().then(deathsTimelineData => setDeathsTimelineData( deathsTimelineData ))
+    getDeathsTimelineData().then(deathsTimelineData => setDeathsTimelineData(deathsTimelineData))
   }, []);
 
   /* Functions */
   async function getDeathsTimelineData() {
     /* Main */
-    let currentDate = initialDate
+    let currentDate = initialDate.clone()
     const asyncOperations = []
-    const timelineData = {}
+    const timelineData = []
     while (!currentDate.isSame(moment(), 'day')) {
-      asyncOperations.push(addDataForDay(timelineData, currentDate))
+      asyncOperations.push(addDataForDay(timelineData, currentDate.clone()))
       currentDate.add(1, 'day')
     }
     await Promise.all(asyncOperations)
@@ -41,28 +48,53 @@ const Daily = () => {
       processDailyData(data, date, timelineData);
     }
 
+    /**
+     * Add the daily data to the timeline. For each location add the deaths for that location to the city, province and
+     * country for that location. Multiple locations combine to give the resulting number for provinces and countries.
+     * @param {*} dailyData 
+     * @param {*} date 
+     * @param {*} timelineData 
+     */
     function processDailyData(dailyData, date, timelineData) {
       // I'm assuming that there are no gaps in the data. So if a location has an entry on date A there will be an entry 
       // on date B if B > A.
+      const dateIndex = date.diff(initialDate, "days")
+      timelineData[dateIndex] = { date }
       dailyData.forEach(locationData => {
         if (!locationData) { return }
-        const keyCountry  = `${locationData.countryRegion || ""}`
+        const keyCountry  = `${ALIASES[locationData.countryRegion] || locationData.countryRegion || ""}`
         const keyProvince = `${locationData.provinceState || ""}, ${keyCountry}`
         const keyCity     = `${locationData.admin2        || ""}, ${keyProvince}`
         
-        const deaths = Number.parseInt(locationData.deaths)
-        const addToProcessedDataLocal = (key) => addToProcessedData(timelineData, key, locationData, deaths)
+        const deaths = Number.parseInt(locationData.deaths) || 0
+        const addToProcessedDataLocal = (key, level) => addToProcessedData(timelineData, key, locationData, deaths, date, level) // Bind data that will be used in all calls to the function for the current location (ie for city, province and country)
 
-        if (locationData.admin2) { addToProcessedDataLocal(keyCity) }
-        if (locationData.provinceState) { addToProcessedDataLocal(keyProvince) }
-        if (locationData.countryRegion) { addToProcessedDataLocal(keyCountry) }
+        if (locationData.admin2) { addToProcessedDataLocal(keyCity, LOCATION_LEVEL.CITY) }
+        if (locationData.provinceState) { addToProcessedDataLocal(keyProvince, LOCATION_LEVEL.PROVINCE) }
+        if (locationData.countryRegion) { addToProcessedDataLocal(keyCountry, LOCATION_LEVEL.COUNTRY) }
       })
     }
 
-    function addToProcessedData(processedData, key, newData, deaths) {
-      processedData[key] = processedData[key] 
-        ? Object.assign(processedData[key], processedData[key].deaths = deaths)
-        : (({ countryRegion, provinceState, admin2 }) => ({ deaths, countryRegion, provinceState, city: admin2 }))(newData)
+    function addToProcessedData(processedData, locationKey, newData, deaths, date, locationLevel) {
+      const dateIndex = date.diff(initialDate, "days")
+      const existingDateEntry = processedData[dateIndex]
+      const existingLocationEntry = existingDateEntry && processedData[dateIndex][locationKey]
+
+      processedData[dateIndex][locationKey] = existingLocationEntry
+        ? existingLocationEntry + deaths
+        : deaths
+      
+      // const locationEntry = existingLocationEntry
+      // ? Object.assign(existingLocationEntry, { deaths: existingLocationEntry.deaths + deaths }) // Create new entry with sum of previously recorded deaths for locationdate and additional deaths
+      // : (({ countryRegion, provinceState, admin2 }) => ({
+      //   deaths: deaths || 0,
+      //   countryRegion,
+      //   provinceState: locationLevel < LOCATION_LEVEL.COUNTRY && provinceState,
+      //   city: locationLevel < LOCATION_LEVEL.PROVINCE && admin2,
+      //   date,
+      // }))(newData) // Create new entry based on the current locationdate data.
+      // if (!existingDateEntry) { processedData[dateIndex] = {} }
+      // processedData[dateIndex][locationKey] = locationEntry
     }
   }
 
@@ -95,7 +127,7 @@ const Daily = () => {
         <h3>Deaths per Capita</h3>
         <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
           <ResponsiveContainer>
-            <ComposedChart
+            <LineChart
               width={500}
               height={400}
               data={deathsTimelineData}
@@ -104,14 +136,12 @@ const Daily = () => {
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="deaths" />
+              <XAxis dataKey="date" />
               <YAxis />
               <Legend />
               <Tooltip />
-              <Area type="monotone" dataKey="mainlandChina" stroke="#7ca48b" fill="#82ca9d" />
-              <Area type="monotone" dataKey="otherLocations" stroke="#ffc658" fill="#ffc658" />
-              <Line type="monotone" dataKey="totalConfirmed" stroke="#ff7300" dot={false} />
-            </ComposedChart>
+              <Line type="monotone" dataKey="Mainland China" stroke="#ff7300" dot={false} />
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </>
