@@ -5,13 +5,22 @@ import { API_URL } from '../../constants';
 import { ComposedChart, Line, Legend, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart } from 'recharts';
 import moment from 'moment';
 
+import populationData from '../../data/processed-populations'
+
+//! FIXME: Replace moment with date-fns
+//! FIXME: Store the raw virus data in global state with reducer.
+//! FIXME: Refactor out the Deaths per capita.
+
 const LOCATION_LEVEL = Object.freeze({
   CITY: 1,
   PROVINCE: 2,
   COUNTRY: 3,
 })
-const ALIASES = Object.freeze({
+const DISPLAY_ALIASES = Object.freeze({
   China: "Mainland China",
+})
+const POPULATION_ALIASES = Object.freeze({
+  "Mainland China": "China",
 })
 const initialDate = moment('2020-01-01')
 
@@ -62,7 +71,7 @@ const Daily = () => {
       timelineData[dateIndex] = { date }
       dailyData.forEach(locationData => {
         if (!locationData) { return }
-        const keyCountry  = `${ALIASES[locationData.countryRegion] || locationData.countryRegion || ""}`
+        const keyCountry  = `${DISPLAY_ALIASES[locationData.countryRegion] || locationData.countryRegion || ""}`
         const keyProvince = `${locationData.provinceState || ""}, ${keyCountry}`
         const keyCity     = `${locationData.admin2        || ""}, ${keyProvince}`
         
@@ -72,6 +81,15 @@ const Daily = () => {
         if (locationData.admin2) { addToProcessedDataLocal(keyCity, LOCATION_LEVEL.CITY) }
         if (locationData.provinceState) { addToProcessedDataLocal(keyProvince, LOCATION_LEVEL.PROVINCE) }
         if (locationData.countryRegion) { addToProcessedDataLocal(keyCountry, LOCATION_LEVEL.COUNTRY) }
+      })
+
+      // Change from absolute deaths to deaths per million
+      Object.entries(timelineData[dateIndex]).forEach(entry => {
+        if (entry[0] === "date") { return }
+        const [ country, deaths ] = entry
+        const population = populationData[POPULATION_ALIASES[country] || country]
+        if (!population) { return delete timelineData[dateIndex][country] }
+        timelineData[dateIndex][country] = Math.round(deaths / population.Value * 1_000_000)
       })
     }
 
@@ -124,7 +142,7 @@ const Daily = () => {
           </ResponsiveContainer>
         </div>
         <Divider />
-        <h3>Deaths per Capita</h3>
+        <h3>Deaths per 1 million population</h3>
         <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
           <ResponsiveContainer>
             <LineChart
@@ -141,6 +159,7 @@ const Daily = () => {
               <Legend />
               <Tooltip />
               <Line type="monotone" dataKey="Mainland China" stroke="#ff7300" dot={false} />
+              <Line type="monotone" dataKey="Sweden" dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
