@@ -4,8 +4,10 @@ import { Line, Legend, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 
 import { API_URL } from '../constants';
 import populationData from '../data/processed-populations'
+import { Dropdown } from 'semantic-ui-react';
 
 //! BUG: Let the user pick the countries that they want to show instead of hardcoding them.
+//! BUG: Make sure all keys are properly aliased between the deaths and population data.
 //! FIXME: Fix the chart grid.
 //! TODO: Let user choose a threshold for number of deaths to align different countries.
 //! FIXME: Store data in global state with reducer and check if it needs to be updated.
@@ -23,7 +25,23 @@ const DISPLAY_ALIASES = Object.freeze({
 const POPULATION_ALIASES = Object.freeze({
   "Mainland China": "China",
 })
+const searchOptions = Object.keys(populationData).map(country => {
+  const name = getDisplayAlias(country)
+  return {
+    key: name,
+    text: name,
+    value: name,
+  }
+})
 const initialDate = moment('2020-01-01')
+
+function getDisplayAlias(location) {
+  return DISPLAY_ALIASES[location] || location
+}
+
+function getPopulationAlias(location) {
+  return POPULATION_ALIASES[location] || location
+}
 
 export default function DeathsPerMillionChart() {
   /* Setup */
@@ -55,9 +73,9 @@ export default function DeathsPerMillionChart() {
     /**
      * Add the daily data to the timeline. For each location add the deaths for that location to the city, province and
      * country for that location. Multiple locations combine to give the resulting number for provinces and countries.
-     * @param {*} dailyData 
-     * @param {*} date 
-     * @param {*} timelineData 
+     * @param {Object} dailyData 
+     * @param {moment} date 
+     * @param {Array} timelineData 
      */
     function processDailyData(dailyData, date, timelineData) {
       // I'm assuming that there are no gaps in the data. So if a location has an entry on date A there will be an entry 
@@ -66,7 +84,7 @@ export default function DeathsPerMillionChart() {
       timelineData[dateIndex] = { date }
       dailyData.forEach(locationData => {
         if (!locationData) { return }
-        const keyCountry  = `${DISPLAY_ALIASES[locationData.countryRegion] || locationData.countryRegion || ""}`
+        const keyCountry  = `${getDisplayAlias(locationData.countryRegion) || ""}`
         const keyProvince = `${locationData.provinceState || ""}, ${keyCountry}`
         const keyCity     = `${locationData.admin2        || ""}, ${keyProvince}`
         
@@ -82,7 +100,7 @@ export default function DeathsPerMillionChart() {
       Object.entries(timelineData[dateIndex]).forEach(entry => {
         if (entry[0] === "date") { return }
         const [ country, deaths ] = entry
-        const population = populationData[POPULATION_ALIASES[country] || country]
+        const population = populationData[getPopulationAlias(country)]
         if (!population) { return delete timelineData[dateIndex][country] }
         timelineData[dateIndex][country] = Math.round(deaths / population.Value * 1_000_000)
       })
@@ -110,7 +128,6 @@ export default function DeathsPerMillionChart() {
       // processedData[dateIndex][locationKey] = locationEntry
     }
   }
-  
 
   function getRandomColour() {
     return '#'+ Math.round(Math.random() * 0xffffff).toString(16).padStart(6,'0')
@@ -119,6 +136,15 @@ export default function DeathsPerMillionChart() {
   return (
     <>
       <h3>Deaths per 1 million population</h3>
+      <Dropdown
+        placeholder='Country'
+        multiple
+        fluid
+        options={searchOptions}
+        search
+        selection
+        // search={_.debounce(handleSearchChange, 500, { leading: true })}
+      />
       <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
         <ResponsiveContainer>
           <LineChart
