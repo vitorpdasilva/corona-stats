@@ -4,6 +4,7 @@ import { Divider } from 'semantic-ui-react';
 import { API_URL } from '../../constants';
 import { ComposedChart, Line, Legend, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
+import DeathsPerMillionChart from '../../components/deathsPerMillionChart';
 
 const Daily = () => {
   const [ dataChart, setDataChart ] = useState();
@@ -41,6 +42,7 @@ const Daily = () => {
           </ResponsiveContainer>
         </div>
         <Divider />
+        <DeathsPerMillionChart />
       </>
     )
   }
