@@ -1,45 +1,101 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Line, Legend, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart } from 'recharts';
+import _ from 'lodash'
 
 import { API_URL } from '../constants';
 import populationData from '../data/processed-populations'
 import { Dropdown } from 'semantic-ui-react';
 
-//! BUG: Make sure all keys are properly aliased between the deaths and population data.
-//! FIXME: X-axis labels (date/numbers)
 //! FIXME: Fix the chart grid.
+//! FIXME: X-axis labels (date/numbers)
 //! TODO: Let user choose a threshold for number of deaths to align different countries.
+//! FIXME: Cleanup aligning countries names in population and deaths. It's printing on each render.
 //! FIXME: Store data in global state with reducer and check if it needs to be updated.
 //! TODO: Add default country as props so that the chart can be used on country page.
+//! TODO: Add 10 (?) worst countries as default?
 //! REFACTOR: Replace moment with date-fns
+//! REFACTOR: Move search component to own file.
 
 const LOCATION_LEVEL = Object.freeze({
   CITY: 1,
   PROVINCE: 2,
   COUNTRY: 3,
 })
-const DISPLAY_ALIASES = Object.freeze({
-  China: "Mainland China",
-})
-const POPULATION_ALIASES = Object.freeze({
-  "Mainland China": "China",
-})
-const searchOptions = Object.keys(populationData).map(country => {
-  const name = getDisplayAlias(country)
-  return {
-    key: name,
-    text: name,
-    value: name,
-  }
-})
+const populationMissing = new Set()
+const searchableCountries = new Set()
 const initialDate = moment('2020-01-01')
 
-function getDisplayAlias(location) {
-  return DISPLAY_ALIASES[location] || location
+/**
+ * Use to get the display name based on the country names in the death data. Use to override the death data name and
+ * make sure that the same country is treated as the same even if the name in the death data changes.
+ * @param {string} country 
+ */
+function getDisplayAlias(country) {
+  const trimmedCountry = country.trim()
+  const DISPLAY_ALIASES = Object.freeze({
+    China: "Mainland China",
+    "Republic of Ireland": "Ireland",
+    "Iran (Islamic Republic of)": "Iran",
+    "Hong Kong SAR": "Hong Kong",
+    "Taipei and environs": "Taiwan",
+    "Viet Nam": "Vietnam",
+    "occupied Palestinian territory": "Palestine",
+    "Macao SAR": "Macao",
+    "Republic of Moldova": "Moldova",
+    "Holy See": "Vatican City",
+    "Korea, South": "South Korea",
+    "Saint Kitts and Nevis": "St. Kitts and Nevis",
+    "Saint Lucia": "St. Lucia",
+    "Saint Vincent and the Grenadines": "St. Vincent and the Grenadines",
+    "Taiwan*": "Taiwan",
+    "Republic of Korea": "South Korea",
+    "Saint Martin": "St. Martin",
+    "Republic of the Congo": "Congo (Brazzaville)",
+    "The Bahamas": "Bahamas",
+    "The Gambia": "Gambia",
+    "Bahamas, The": "Bahamas",
+  })
+  return DISPLAY_ALIASES[trimmedCountry] || trimmedCountry
 }
 
+/**
+ * Get the location name as used in the population data, given location key as created for the data in
+ * `processDailyData`
+ * @param {string} location 
+ */
 function getPopulationAlias(location) {
+  const POPULATION_ALIASES = Object.freeze({
+    "Mainland China": "China",
+    "Hong Kong": "Hong Kong SAR, China",
+    "Macau": "Macao SAR, China",
+    "US": "United States",
+    "South Korea": "Korea, Rep.",
+    "Ivory Coast": "Cote d'Ivoire",
+    "Russia": "Russian Federation",
+    "UK": "United Kingdom",
+    "Egypt": "Egypt, Arab Rep.",
+    "Iran": "Iran, Islamic Rep.",
+    "Slovakia": "Slovak Republic",
+    "St Martin": "St. Martin (French part)",
+    "Brunei": "Brunei Darussalam",
+    "Bahamas, The": "Bahamas",
+    "Burma": "Myanmar",
+    "Czechia": "Czech Republic",
+    "Gambia": "Gambia, The",
+    "St. Martin": "St. Martin (French part)",
+    "Macao": "Macao SAR, China",
+    "Venezuela": "Venezuela, RB",
+    "Bahamas": "Bahamas, The",
+    "Syria": "Syrian Arab Republic",
+    "Yemen": "Yemen, Rep.",
+    "Congo (Brazzaville)": "Congo, Rep.",
+    "Congo (Kinshasa)": "Congo, Dem. Rep.",
+    "Kyrgyzstan": "Kyrgyz Republic",
+    "Laos": "Lao PDR",
+    "Cape Verde": "Cabo Verde",
+    "East Timor": "Timor-Leste",
+  })
   return POPULATION_ALIASES[location] || location
 }
 
@@ -86,8 +142,8 @@ export default function DeathsPerMillionChart() {
       dailyData.forEach(locationData => {
         if (!locationData) { return }
         const keyCountry  = `${getDisplayAlias(locationData.countryRegion) || ""}`
-        const keyProvince = `${locationData.provinceState || ""}, ${keyCountry}`
-        const keyCity     = `${locationData.admin2        || ""}, ${keyProvince}`
+        const keyProvince = `${locationData.provinceState || ""} - ${keyCountry}`
+        const keyCity     = `${locationData.admin2        || ""} - ${keyProvince}`
         
         const deaths = Number.parseInt(locationData.deaths) || 0
         const addToProcessedDataLocal = (key, level) => addToProcessedData(timelineData, key, locationData, deaths, date, level) // Bind data that will be used in all calls to the function for the current location (ie for city, province and country)
@@ -100,10 +156,14 @@ export default function DeathsPerMillionChart() {
       // Change from absolute deaths to deaths per million
       Object.entries(timelineData[dateIndex]).forEach(entry => {
         if (entry[0] === "date") { return }
-        const [ country, deaths ] = entry
-        const population = populationData[getPopulationAlias(country)]
-        if (!population) { return delete timelineData[dateIndex][country] }
-        timelineData[dateIndex][country] = Math.round(deaths / population.Value * 1_000_000)
+        const [ location, deaths ] = entry
+        const population = populationData[getPopulationAlias(location)]
+        if (!population) {
+          if (!location.includes(' - ')) { populationMissing.add(location) } // ' - ' is included if it's lower level than country.
+          return delete timelineData[dateIndex][location]
+        }
+        timelineData[dateIndex][location] = Math.round(deaths / population.Value * 1_000_000)
+        searchableCountries.add(location)
       })
     }
 
@@ -115,18 +175,6 @@ export default function DeathsPerMillionChart() {
       processedData[dateIndex][locationKey] = existingLocationEntry
         ? existingLocationEntry + deaths
         : deaths
-      
-      // const locationEntry = existingLocationEntry
-      // ? Object.assign(existingLocationEntry, { deaths: existingLocationEntry.deaths + deaths }) // Create new entry with sum of previously recorded deaths for locationdate and additional deaths
-      // : (({ countryRegion, provinceState, admin2 }) => ({
-      //   deaths: deaths || 0,
-      //   countryRegion,
-      //   provinceState: locationLevel < LOCATION_LEVEL.COUNTRY && provinceState,
-      //   city: locationLevel < LOCATION_LEVEL.PROVINCE && admin2,
-      //   date,
-      // }))(newData) // Create new entry based on the current locationdate data.
-      // if (!existingDateEntry) { processedData[dateIndex] = {} }
-      // processedData[dateIndex][locationKey] = locationEntry
     }
   }
 
@@ -138,7 +186,16 @@ export default function DeathsPerMillionChart() {
     setSelectedCountries(value)
   }
 
-  const chartLines = selectedCountries.map(country => <Line type="monotone" dataKey={getDisplayAlias(country)} stroke={getRandomColour()} dot={false} />)
+  const chartLines = selectedCountries.map(country => <Line type="monotone" dataKey={getDisplayAlias(country)} stroke={getRandomColour()} dot={false} key={country} />)
+
+  console.log(_.difference(Object.keys(populationData).map(country => country),[...searchableCountries].map(country => getPopulationAlias(country)) ))
+  console.log(populationMissing)
+
+  const searchOptions = [...searchableCountries].sort().map(country => ({
+    key: country,
+    text: country,
+    value: country,
+  }))
 
   return (
     <>
