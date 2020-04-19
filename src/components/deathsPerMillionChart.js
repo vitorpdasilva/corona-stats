@@ -22,7 +22,7 @@ const LOCATION_LEVEL = Object.freeze({
 })
 const populationMissing = new Set()
 const searchableCountries = new Set()
-const initialDate = moment('2020-01-01')
+const initialDate = moment('2020-01-22') // This is the first date with source data on deaths
 
 /**
  * Use to get the display name based on the country names in the death data. Use to override the death data name and
