@@ -7,8 +7,6 @@ import { API_URL } from '../constants';
 import populationData from '../data/processed-populations'
 import { Dropdown } from 'semantic-ui-react';
 
-//! FIXME: Fix the chart grid.
-//! FIXME: X-axis labels (date/numbers)
 //! TODO: Let user choose a threshold for number of deaths to align different countries.
 //! FIXME: Cleanup aligning countries names in population and deaths. It's printing on each render.
 //! FIXME: Store data in global state with reducer and check if it needs to be updated.
@@ -34,7 +32,7 @@ const initialDate = moment('2020-01-01')
 function getDisplayAlias(country) {
   const trimmedCountry = country.trim()
   const DISPLAY_ALIASES = Object.freeze({
-    China: "Mainland China",
+    "Mainland China": "China",
     "Republic of Ireland": "Ireland",
     "Iran (Islamic Republic of)": "Iran",
     "Hong Kong SAR": "Hong Kong",
@@ -66,7 +64,6 @@ function getDisplayAlias(country) {
  */
 function getPopulationAlias(location) {
   const POPULATION_ALIASES = Object.freeze({
-    "Mainland China": "China",
     "Hong Kong": "Hong Kong SAR, China",
     "Macau": "Macao SAR, China",
     "US": "United States",
@@ -138,7 +135,7 @@ export default function DeathsPerMillionChart() {
       // I'm assuming that there are no gaps in the data. So if a location has an entry on date A there will be an entry 
       // on date B if B > A.
       const dateIndex = date.diff(initialDate, "days")
-      timelineData[dateIndex] = { date }
+      timelineData[dateIndex] = { date: date.format("YYYY-MM-DD") }
       dailyData.forEach(locationData => {
         if (!locationData) { return }
         const keyCountry  = `${getDisplayAlias(locationData.countryRegion) || ""}`
