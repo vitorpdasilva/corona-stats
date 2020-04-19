@@ -10,6 +10,8 @@ import populationData from '../../data/processed-populations'
 //! FIXME: Replace moment with date-fns
 //! FIXME: Store the raw virus data in global state with reducer.
 //! FIXME: Refactor out the Deaths per capita.
+//! TODO: Let the user pick the countries that they want to show in deaths per million.
+//! TODO: Let user choose a threshold for number of deaths to align different countries.
 
 const LOCATION_LEVEL = Object.freeze({
   CITY: 1,
@@ -158,13 +160,19 @@ const Daily = () => {
               <YAxis />
               <Legend />
               <Tooltip />
-              <Line type="monotone" dataKey="Mainland China" stroke="#ff7300" dot={false} />
-              <Line type="monotone" dataKey="Sweden" dot={false} />
+              <Line type="monotone" dataKey="Mainland China" stroke={getRandomColour()} dot={false} />
+              <Line type="monotone" dataKey="Sweden" stroke={getRandomColour()} dot={false} />
+              <Line type="monotone" dataKey="Italy" stroke={getRandomColour()} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </>
     )
+  }
+
+
+  function getRandomColour() {
+    return '#'+ Math.round(Math.random() * 0xffffff).toString(16).padStart(6,'0')
   }
 
   return (
