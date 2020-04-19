@@ -6,8 +6,8 @@ import { API_URL } from '../constants';
 import populationData from '../data/processed-populations'
 import { Dropdown } from 'semantic-ui-react';
 
-//! BUG: Let the user pick the countries that they want to show instead of hardcoding them.
 //! BUG: Make sure all keys are properly aliased between the deaths and population data.
+//! FIXME: X-axis labels (date/numbers)
 //! FIXME: Fix the chart grid.
 //! TODO: Let user choose a threshold for number of deaths to align different countries.
 //! FIXME: Store data in global state with reducer and check if it needs to be updated.
@@ -46,6 +46,7 @@ function getPopulationAlias(location) {
 export default function DeathsPerMillionChart() {
   /* Setup */
   const [ deathsTimelineData, setDeathsTimelineData ] = useState()
+  const [ selectedCountries, setSelectedCountries ] = useState([])
   useEffect(() => {
     getDeathsTimelineData().then(deathsTimelineData => setDeathsTimelineData(deathsTimelineData))
   }, []);
@@ -132,6 +133,12 @@ export default function DeathsPerMillionChart() {
   function getRandomColour() {
     return '#'+ Math.round(Math.random() * 0xffffff).toString(16).padStart(6,'0')
   }
+  
+  function handleCountrySelection(e, { value }) {
+    setSelectedCountries(value)
+  }
+
+  const chartLines = selectedCountries.map(country => <Line type="monotone" dataKey={getDisplayAlias(country)} stroke={getRandomColour()} dot={false} />)
 
   return (
     <>
@@ -139,6 +146,7 @@ export default function DeathsPerMillionChart() {
       <Dropdown
         placeholder='Country'
         multiple
+        onChange={handleCountrySelection}
         fluid
         options={searchOptions}
         search
@@ -160,9 +168,7 @@ export default function DeathsPerMillionChart() {
             <YAxis />
             <Legend />
             <Tooltip />
-            <Line type="monotone" dataKey="Mainland China" stroke={getRandomColour()} dot={false} />
-            <Line type="monotone" dataKey="Sweden" stroke={getRandomColour()} dot={false} />
-            <Line type="monotone" dataKey="Italy" stroke={getRandomColour()} dot={false} />
+            {chartLines}
           </LineChart>
         </ResponsiveContainer>
       </div>
