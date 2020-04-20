@@ -53,6 +53,8 @@ function getDisplayAlias(country) {
     "The Bahamas": "Bahamas",
     "The Gambia": "Gambia",
     "Bahamas, The": "Bahamas",
+    "UK": "United Kingdom",
+    "US": "USA",
   })
   return DISPLAY_ALIASES[trimmedCountry] || trimmedCountry
 }
@@ -66,11 +68,10 @@ function getPopulationAlias(location) {
   const POPULATION_ALIASES = Object.freeze({
     "Hong Kong": "Hong Kong SAR, China",
     "Macau": "Macao SAR, China",
-    "US": "United States",
+    "USA": "United States",
     "South Korea": "Korea, Rep.",
     "Ivory Coast": "Cote d'Ivoire",
     "Russia": "Russian Federation",
-    "UK": "United Kingdom",
     "Egypt": "Egypt, Arab Rep.",
     "Iran": "Iran, Islamic Rep.",
     "Slovakia": "Slovak Republic",
