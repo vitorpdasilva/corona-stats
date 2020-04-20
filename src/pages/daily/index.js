@@ -41,8 +41,6 @@ const Daily = () => {
             </ComposedChart>
           </ResponsiveContainer>
         </div>
-        <Divider />
-        <DeathsPerMillionChart />
       </>
     )
   }
@@ -54,6 +52,8 @@ const Daily = () => {
       <Link to="/">&larr; Back to data and filters</Link>
       <Divider />
       <BuildChart />
+      <Divider />
+      <DeathsPerMillionChart />
     </div>
   )
 }
