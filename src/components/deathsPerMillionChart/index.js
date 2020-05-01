@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Line, Legend, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart } from 'recharts';
 import _ from 'lodash'
-
-import { API_URL } from '../constants';
-import populationData from '../data/processed-populations'
 import { Dropdown, Button } from 'semantic-ui-react';
+
+import { API_URL } from '../../constants'; // Would be nice to set up absolut imports from src
+import populationData from '../../data/processed-populations'
+import { getDisplayAlias, getPopulationAlias } from './countryTranslations'
 
 //! TODO: Let user choose a threshold for number of deaths to align different countries.
 //! BUG: Keep the chart colors from changing. And maybe generate them from a color scheme
@@ -24,79 +25,6 @@ const TOP_COUNTRIES_NUMBER = 10
 const populationMissing = new Set()
 const searchableCountries = new Set()
 const initialDate = moment('2020-01-22') // This is the first date with source data on deaths
-
-/**
- * Use to get the display name based on the country names in the death data. Use to override the death data name and
- * make sure that the same country is treated as the same even if the name in the death data changes.
- * @param {string} country 
- */
-function getDisplayAlias(country) {
-  const trimmedCountry = country.trim()
-  const DISPLAY_ALIASES = Object.freeze({
-    "Bahamas, The": "Bahamas",
-    "Holy See": "Vatican City",
-    "Hong Kong SAR": "Hong Kong",
-    "Iran (Islamic Republic of)": "Iran",
-    "Korea, South": "South Korea",
-    "Macao SAR": "Macao",
-    "Mainland China": "China",
-    "Republic of Ireland": "Ireland",
-    "Republic of Korea": "South Korea",
-    "Republic of Moldova": "Moldova",
-    "Republic of the Congo": "Congo (Brazzaville)",
-    "Saint Kitts and Nevis": "St. Kitts and Nevis",
-    "Saint Lucia": "St. Lucia",
-    "Saint Martin": "St. Martin",
-    "Saint Vincent and the Grenadines": "St. Vincent and the Grenadines",
-    "Taipei and environs": "Taiwan",
-    "Taiwan*": "Taiwan",
-    "The Bahamas": "Bahamas",
-    "The Gambia": "Gambia",
-    "UK": "United Kingdom",
-    "US": "USA",
-    "Viet Nam": "Vietnam",
-    "occupied Palestinian territory": "Palestine",
-  })
-  return DISPLAY_ALIASES[trimmedCountry] || trimmedCountry
-}
-
-/**
- * Get the location name as used in the population data, given location key as created for the data in
- * `processDailyData`
- * @param {string} location 
- */
-function getPopulationAlias(location) {
-  const POPULATION_ALIASES = Object.freeze({
-    "Bahamas": "Bahamas, The",
-    "Bahamas, The": "Bahamas",
-    "Brunei": "Brunei Darussalam",
-    "Burma": "Myanmar",
-    "Cape Verde": "Cabo Verde",
-    "Congo (Brazzaville)": "Congo, Rep.",
-    "Congo (Kinshasa)": "Congo, Dem. Rep.",
-    "Czechia": "Czech Republic",
-    "East Timor": "Timor-Leste",
-    "Egypt": "Egypt, Arab Rep.",
-    "Gambia": "Gambia, The",
-    "Hong Kong": "Hong Kong SAR, China",
-    "Iran": "Iran, Islamic Rep.",
-    "Ivory Coast": "Cote d'Ivoire",
-    "Kyrgyzstan": "Kyrgyz Republic",
-    "Laos": "Lao PDR",
-    "Macao": "Macao SAR, China",
-    "Macau": "Macao SAR, China",
-    "Russia": "Russian Federation",
-    "Slovakia": "Slovak Republic",
-    "South Korea": "Korea, Rep.",
-    "St Martin": "St. Martin (French part)",
-    "St. Martin": "St. Martin (French part)",
-    "Syria": "Syrian Arab Republic",
-    "USA": "United States",
-    "Venezuela": "Venezuela, RB",
-    "Yemen": "Yemen, Rep.",
-  })
-  return POPULATION_ALIASES[location] || location
-}
 
 export default function DeathsPerMillionChart() {
   /* Setup */

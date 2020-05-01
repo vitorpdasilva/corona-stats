@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Divider } from 'semantic-ui-react';
-import { API_URL } from '../../constants';
 import { ComposedChart, Line, Legend, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-import DeathsPerMillionChart from '../../components/deathsPerMillionChart';
+import { API_URL } from '../../constants';
+import DeathsPerMillionChart from '../../components/deathsPerMillionChart/index'; //It fails to compile if I don't add the index path????
 
 const Daily = () => {
   const [ dataChart, setDataChart ] = useState();
