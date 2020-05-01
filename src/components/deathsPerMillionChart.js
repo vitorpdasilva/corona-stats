@@ -5,13 +5,13 @@ import _ from 'lodash'
 
 import { API_URL } from '../constants';
 import populationData from '../data/processed-populations'
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, Button } from 'semantic-ui-react';
 
 //! TODO: Let user choose a threshold for number of deaths to align different countries.
+//! BUG: Keep the chart colors from changing. And maybe generate them from a color scheme
 //! FIXME: Cleanup aligning countries names in population and deaths. It's printing on each render.
 //! FIXME: Store data in global state with reducer and check if it needs to be updated.
 //! TODO: Add default country as props so that the chart can be used on country page.
-//! TODO: Add 10 (?) worst countries as default?
 //! REFACTOR: Replace moment with date-fns
 //! REFACTOR: Move search component to own file.
 
@@ -20,6 +20,7 @@ const LOCATION_LEVEL = Object.freeze({
   PROVINCE: 2,
   COUNTRY: 3,
 })
+const TOP_COUNTRIES_NUMBER = 10
 const populationMissing = new Set()
 const searchableCountries = new Set()
 const initialDate = moment('2020-01-22') // This is the first date with source data on deaths
@@ -101,9 +102,14 @@ export default function DeathsPerMillionChart() {
   /* Setup */
   const [ deathsTimelineData, setDeathsTimelineData ] = useState()
   const [ selectedCountries, setSelectedCountries ] = useState([])
+  const [ topCountries, setTopCountries ] = useState([]) // I don't actually need to have this in state. I tried to have `let topCountries = [] and using that instead of state, but get warning that it will be lost used in useEffect(). Apparently I can use useRef to handle it. But this works so I'm leaving it as is.
   useEffect(() => {
-    getDeathsTimelineData().then(deathsTimelineData => setDeathsTimelineData(deathsTimelineData))
-  }, []);
+    if (!deathsTimelineData) {
+      getDeathsTimelineData().then(deathsTimelineData => setDeathsTimelineData(deathsTimelineData))
+    } else if (!topCountries.length) {
+      setTopCountries(getTopCountries(deathsTimelineData))
+    }
+  }, [deathsTimelineData, topCountries]);
 
   /* Functions */
   async function getDeathsTimelineData() {
@@ -176,12 +182,32 @@ export default function DeathsPerMillionChart() {
     }
   }
 
+  function getTopCountries(deathsTimelineData) {
+    const finalDayData = getFinalDayData()
+    return Object.entries(finalDayData).sort((a, b) => b[1] - a[1]).slice(0,TOP_COUNTRIES_NUMBER).reduce((res,item) => { res.push(item[0]); return res }, [])// Take final day data minus the data key, sort by values, take top countries, and reduce the names to an array.
+
+    /** Get the the data for the last day with at least as much data as the top countries number */
+    function getFinalDayData() {
+      let finalDayData = {}
+      let i = 1
+      while (Object.keys(finalDayData).length < TOP_COUNTRIES_NUMBER + 1) { // + 1 to account for 'date' key-value
+        finalDayData = deathsTimelineData[deathsTimelineData.length - i++]
+      }
+      return _.omit(finalDayData, 'date')
+    }
+  }
+
+
   function getRandomColour() {
     return '#'+ Math.round(Math.random() * 0xffffff).toString(16).padStart(6,'0')
   }
   
-  function handleCountrySelection(e, { value }) {
+  function handleCountrySelection(_e, { value }) {
     setSelectedCountries(value)
+  }
+
+  function addTopCountries() {
+    setSelectedCountries(selectedCountries.concat(topCountries))
   }
 
   const chartLines = selectedCountries.map(country => <Line type="monotone" dataKey={getDisplayAlias(country)} stroke={getRandomColour()} dot={false} key={country} />)
@@ -198,16 +224,25 @@ export default function DeathsPerMillionChart() {
   return (
     <>
       <h3>Deaths per 1 million population</h3>
-      <Dropdown
-        placeholder='Country'
-        multiple
-        onChange={handleCountrySelection}
-        fluid
-        options={searchOptions}
-        search
-        selection
-        // search={_.debounce(handleSearchChange, 500, { leading: true })}
-      />
+      <div style={{ display: 'flex', maxWidth: "700px" }}>
+        <Dropdown
+          fluid
+          placeholder='Country'
+          multiple
+          onChange={handleCountrySelection}
+          options={searchOptions}
+          search
+          selection
+          value={selectedCountries}
+        />
+        <Button 
+          style={{ whiteSpace: 'nowrap' }}
+          onClick={addTopCountries}
+          disabled={!topCountries.length}
+        >
+          Top {TOP_COUNTRIES_NUMBER}
+        </Button>
+      </div>
       <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
         <ResponsiveContainer>
           <LineChart
