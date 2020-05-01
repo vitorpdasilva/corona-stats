@@ -59,9 +59,13 @@ export default function DeathsPerMillionChart() {
 
       /* Helper functions */
       async function addDataForDay(timelineData, date) {
+        try {
           const data = await fetch(`${API_URL}/daily/${date.format("M-D-YYYY")}`).then(data => data.json());
           processDailyData(data, date, timelineData);
+        } catch (err) {
+          console.log("Error:", err)
         }
+      }
 
       /**
        * Add the daily data to the timeline. For each location add the deaths for that location to the city, province and
