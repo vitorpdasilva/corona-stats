@@ -8,10 +8,9 @@ import { API_URL } from '../../constants'; // Would be nice to set up absolut im
 import populationData from '../../data/processed-populations'
 import { getDisplayAlias, getPopulationAlias } from './countryTranslations'
 
-//! TODO: Add the chart lines sorted by value. Most deaths per million first.
 //! FIXME: Cleanup aligning countries names in population and deaths. It's printing on each render.
 //! FIXME: Store data in global state with reducer and check if it needs to be updated.
-//! TODO: Add default country as props so that the chart can be used on country page.
+//! TODO: Add default country as props so that the chart can be used on country page. This should be done together with storing the data in global state above.
 //! REFACTOR: Replace moment with date-fns
 //! REFACTOR: Move search component to own file.
 
