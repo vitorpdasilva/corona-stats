@@ -135,7 +135,7 @@ export default function DeathsPerMillionChart() {
   }
 
   function addTopCountries() {
-    setSelectedCountries(selectedCountries.concat(topCountries))
+    setSelectedCountries(_.uniq(selectedCountries.concat(topCountries)))
   }
 
   const chartLines = selectedCountries.map(country => <Line type="monotone" dataKey={getDisplayAlias(country)} stroke={getRandomColour()} dot={false} key={country} />)
