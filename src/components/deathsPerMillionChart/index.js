@@ -164,11 +164,11 @@ export default function DeathsPerMillionChart() {
   }
 
   function addTopCountries() {
-    let selectedCountries
+    let selectedCountriesNew
     const allTopCountriesAreSelected = !_.difference(topCountries, selectedCountries).length
-    if (allTopCountriesAreSelected) { selectedCountries = _.difference(selectedCountries, topCountries) } // Remove top countries from selection
-    else { selectedCountries = _.uniq(selectedCountries.concat(topCountries)) }
-    updateSelectedCountries(selectedCountries)
+    if (allTopCountriesAreSelected) { selectedCountriesNew = _.difference(selectedCountries, topCountries) } // Remove top countries from selection
+    else { selectedCountriesNew = _.uniq(selectedCountries.concat(topCountries)) }
+    updateSelectedCountries(selectedCountriesNew)
   }
 
   function adjustTimelineData(_e, { value }) {
