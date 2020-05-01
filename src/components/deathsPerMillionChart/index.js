@@ -145,14 +145,10 @@ export default function DeathsPerMillionChart() {
   function getRandomColour() {
     return '#'+ Math.round(Math.random() * 0xffffff).toString(16).padStart(6,'0')
   }
-  
-  function handleCountrySelection(_e, { value }) {
-    setSelectedCountries(value)
-  }
 
   function addTopCountries() {
     const allTopCountriesAreSelected = !_.difference(topCountries, selectedCountries).length
-    if (allTopCountriesAreSelected) { return setSelectedCountries(_.difference(selectedCountries, topCountries))}
+    if (allTopCountriesAreSelected) { return setSelectedCountries(_.difference(selectedCountries, topCountries))} // Remove top countries from selection
     setSelectedCountries(_.uniq(selectedCountries.concat(topCountries)))
   }
 
@@ -194,7 +190,7 @@ export default function DeathsPerMillionChart() {
           fluid
           placeholder='Country'
           multiple
-          onChange={handleCountrySelection}
+          onChange={(_e, { value }) => setSelectedCountries(value)}
           options={searchOptions}
           search
           selection
