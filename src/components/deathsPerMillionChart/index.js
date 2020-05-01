@@ -8,7 +8,8 @@ import { API_URL } from '../../constants'; // Would be nice to set up absolut im
 import populationData from '../../data/processed-populations'
 import { getDisplayAlias, getPopulationAlias } from './countryTranslations'
 
-//! BUG: Keep the chart colors from changing. And maybe generate them from a color scheme
+//! TODO: Remove Top Countries from chart if they are all already there.
+//! BUG: Keep the chart colors from changing. And maybe generate them from a color scheme. Probably good to move chartlines variable into the state and not regenerate on every rerender.
 //! TODO: Add the chart lines sorted by value. Most deaths per million first.
 //! FIXME: Cleanup aligning countries names in population and deaths. It's printing on each render.
 //! FIXME: Store data in global state with reducer and check if it needs to be updated.
