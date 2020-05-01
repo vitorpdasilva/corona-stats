@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Line, Legend, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart } from 'recharts';
 import _ from 'lodash'
-import { Dropdown, Button } from 'semantic-ui-react';
+import { Dropdown, Button, Popup } from 'semantic-ui-react';
 
 import { API_URL } from '../../constants'; // Would be nice to set up absolut imports from src
 import populationData from '../../data/processed-populations'
@@ -164,12 +164,25 @@ export default function DeathsPerMillionChart() {
           value={selectedCountries}
         />
         <Button 
-          style={{ whiteSpace: 'nowrap' }}
+          style={{ whiteSpace: 'nowrap', marginLeft: '10px', marginRight: '10px' }}
           onClick={addTopCountries}
           disabled={!topCountries.length}
         >
           Top {TOP_COUNTRIES_NUMBER}
         </Button>
+        <Popup
+          content='Shift the graphs to start at the chosen value'
+          trigger={
+            <Dropdown
+              style={{ flexBasis: '20%' }}
+              fluid
+              placeholder='Align'
+              options={['None',1,2,3].map((item) => ({ key: item, text: item, value: item }))}
+              search
+              selection
+            />
+          }
+        />
       </div>
       <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
         <ResponsiveContainer>
