@@ -149,6 +149,7 @@ export default function DeathsPerMillionChart() {
   }, [deathsTimelineData, topCountries, alignTimelineOptions]);
 
   function updateSelectedCountries(selectedCountries) {
+    selectedCountries.sort((a, b) => deathsTimelineData[deathsTimelineData.length - 1][b] - deathsTimelineData[deathsTimelineData.length - 1][a] )
     setSelectedCountries(selectedCountries)
     setChartLines(selectedCountries.map(country => {
       return (
