@@ -32,6 +32,7 @@ export default function DeathsPerMillionChart() {
   const [ adjustedTimelineData, setAdjustedTimelineData ] = useState()
   const [ alignTimelineOptions, setAlignTimelineOptions ] = useState([])
   const [ selectedCountries, setSelectedCountries ] = useState([])
+  const [ chartLines, setChartLines ] = useState([])
   const [ topCountries, setTopCountries ] = useState([]) // I don't actually need to have this in state. I tried to have `let topCountries = [] and using that instead of state, but get warning that it will be lost used in useEffect(). Apparently I can use useRef to handle it. But this works so I'm leaving it as is.
   useEffect(() => {
     if (!deathsTimelineData) {
@@ -83,7 +84,7 @@ export default function DeathsPerMillionChart() {
         const keyCity     = `${locationData.admin2        || ""} - ${keyProvince}`
         
         const deaths = Number.parseInt(locationData.deaths) || 0
-        const addToProcessedDataLocal = (key, level) => addToProcessedData(timelineData, key, locationData, deaths, date, level) // Bind data that will be used in all calls to the function for the current location (ie for city, province and country)
+        const addToProcessedDataLocal = (key, level) => addDeathsToProcessedData(timelineData, key, locationData, deaths, date, level) // Bind data that will be used in all calls to the function for the current location (ie for city, province and country)
 
         if (locationData.admin2) { addToProcessedDataLocal(keyCity, LOCATION_LEVEL.CITY) }
         if (locationData.provinceState) { addToProcessedDataLocal(keyProvince, LOCATION_LEVEL.PROVINCE) }
@@ -104,7 +105,7 @@ export default function DeathsPerMillionChart() {
       })
     }
 
-    function addToProcessedData(processedData, locationKey, newData, deaths, date, locationLevel) {
+    function addDeathsToProcessedData(processedData, locationKey, newData, deaths, date, locationLevel) {
       const dateIndex = date.diff(initialDate, "days")
       const existingDateEntry = processedData[dateIndex]
       const existingLocationEntry = existingDateEntry && processedData[dateIndex][locationKey]
@@ -146,10 +147,27 @@ export default function DeathsPerMillionChart() {
     return '#'+ Math.round(Math.random() * 0xffffff).toString(16).padStart(6,'0')
   }
 
+  function updateSelectedCountries(selectedCountries) {
+    setSelectedCountries(selectedCountries)
+    setChartLines(selectedCountries.map(country => {
+      return (
+        <Line
+          type="monotone"
+          dataKey={getDisplayAlias(country)}
+          stroke={getRandomColour()}
+          dot={false}
+          key={country}
+        />
+      )
+    }))
+  }
+
   function addTopCountries() {
+    let selectedCountries
     const allTopCountriesAreSelected = !_.difference(topCountries, selectedCountries).length
-    if (allTopCountriesAreSelected) { return setSelectedCountries(_.difference(selectedCountries, topCountries))} // Remove top countries from selection
-    setSelectedCountries(_.uniq(selectedCountries.concat(topCountries)))
+    if (allTopCountriesAreSelected) { selectedCountries = _.difference(selectedCountries, topCountries) } // Remove top countries from selection
+    else { selectedCountries = _.uniq(selectedCountries.concat(topCountries)) }
+    updateSelectedCountries(selectedCountries)
   }
 
   function adjustTimelineData(_e, { value }) {
@@ -171,8 +189,6 @@ export default function DeathsPerMillionChart() {
     setAdjustedTimelineData(adjustedTimelineData)
   }
 
-  const chartLines = selectedCountries.map(country => <Line type="monotone" dataKey={getDisplayAlias(country)} stroke={getRandomColour()} dot={false} key={country} />)
-
   console.log(_.difference(Object.keys(populationData).map(country => country),[...searchableCountries].map(country => getPopulationAlias(country)) ))
   console.log(populationMissing)
 
@@ -190,7 +206,7 @@ export default function DeathsPerMillionChart() {
           fluid
           placeholder='Country'
           multiple
-          onChange={(_e, { value }) => setSelectedCountries(value)}
+          onChange={(_e, { value }) => updateSelectedCountries(value)}
           options={searchOptions}
           search
           selection
