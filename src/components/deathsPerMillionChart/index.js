@@ -8,7 +8,6 @@ import { API_URL } from '../../constants'; // Would be nice to set up absolut im
 import populationData from '../../data/processed-populations'
 import { getDisplayAlias, getPopulationAlias } from './countryTranslations'
 
-//! TODO: Let user choose a threshold for number of deaths to align different countries.
 //! BUG: Keep the chart colors from changing. And maybe generate them from a color scheme
 //! TODO: Add the chart lines sorted by value. Most deaths per million first.
 //! FIXME: Cleanup aligning countries names in population and deaths. It's printing on each render.
@@ -57,7 +56,6 @@ export default function DeathsPerMillionChart() {
       currentDate.add(1, 'day')
     }
     await Promise.all(asyncOperations)
-    console.log(timelineData)
     return timelineData
 
     /* Helper functions */
@@ -137,9 +135,8 @@ export default function DeathsPerMillionChart() {
       const entryWithoutDateKey = _.omit(entry, 'date')
       return _.max(Object.values(entryWithoutDateKey))
     }))
-    const alignTimelineOptions = [ { key: 0, text: 'None', value: 0 } ]
-    console.log({ max })
-    for (let i = 1; i < max; i++ ) {
+    const alignTimelineOptions = [ { key: 'None', text: 'None' } ]
+    for (let i = 0; i <= max; i++ ) {
       alignTimelineOptions.push({ key: i, text: i, value: i })
     }
     return alignTimelineOptions
@@ -155,6 +152,25 @@ export default function DeathsPerMillionChart() {
 
   function addTopCountries() {
     setSelectedCountries(_.uniq(selectedCountries.concat(topCountries)))
+  }
+
+  function adjustTimelineData(_e, { value }) {
+    if (!value) { return setAdjustedTimelineData(deathsTimelineData)}
+    const currentDayByCountry = {}
+    const adjustedTimelineData = deathsTimelineData.reduce((adjustedTimelineData, dateData) => {
+      Object.entries(_.omit(dateData, 'date')).reduce( (adjustedTimelineData, [ country, deaths ]) => {
+        if (deaths >= value) {
+          const countryHasBeenAdded = currentDayByCountry[country]
+          if (!countryHasBeenAdded) { currentDayByCountry[country] = 0 }
+          const dayHasBeenAddedToTimeline = adjustedTimelineData[currentDayByCountry[country]]
+          if (!dayHasBeenAddedToTimeline) { adjustedTimelineData[currentDayByCountry[country]] = { date: currentDayByCountry[country]}}
+          adjustedTimelineData[currentDayByCountry[country]++][country] = deaths
+        }
+        return adjustedTimelineData
+      }, adjustedTimelineData)
+      return adjustedTimelineData
+    }, [])
+    setAdjustedTimelineData(adjustedTimelineData)
   }
 
   const chartLines = selectedCountries.map(country => <Line type="monotone" dataKey={getDisplayAlias(country)} stroke={getRandomColour()} dot={false} key={country} />)
@@ -198,6 +214,7 @@ export default function DeathsPerMillionChart() {
               fluid
               placeholder='Align'
               options={alignTimelineOptions}
+              onChange={adjustTimelineData}
               search
               selection
             />
