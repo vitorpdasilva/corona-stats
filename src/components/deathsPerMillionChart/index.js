@@ -10,6 +10,7 @@ import { getDisplayAlias, getPopulationAlias } from './countryTranslations'
 
 //! TODO: Let user choose a threshold for number of deaths to align different countries.
 //! BUG: Keep the chart colors from changing. And maybe generate them from a color scheme
+//! TODO: Add the chart lines sorted by value. Most deaths per million first.
 //! FIXME: Cleanup aligning countries names in population and deaths. It's printing on each render.
 //! FIXME: Store data in global state with reducer and check if it needs to be updated.
 //! TODO: Add default country as props so that the chart can be used on country page.
@@ -29,15 +30,21 @@ const initialDate = moment('2020-01-22') // This is the first date with source d
 export default function DeathsPerMillionChart() {
   /* Setup */
   const [ deathsTimelineData, setDeathsTimelineData ] = useState()
+  const [ adjustedTimelineData, setAdjustedTimelineData ] = useState()
+  const [ alignTimelineOptions, setAlignTimelineOptions ] = useState([])
   const [ selectedCountries, setSelectedCountries ] = useState([])
   const [ topCountries, setTopCountries ] = useState([]) // I don't actually need to have this in state. I tried to have `let topCountries = [] and using that instead of state, but get warning that it will be lost used in useEffect(). Apparently I can use useRef to handle it. But this works so I'm leaving it as is.
   useEffect(() => {
     if (!deathsTimelineData) {
-      getDeathsTimelineData().then(deathsTimelineData => setDeathsTimelineData(deathsTimelineData))
-    } else if (!topCountries.length) {
-      setTopCountries(getTopCountries(deathsTimelineData))
+      getDeathsTimelineData().then(deathsTimelineData => {
+        setDeathsTimelineData(deathsTimelineData)
+        setAdjustedTimelineData(deathsTimelineData)
+      })
+    } else {
+      if (!topCountries.length) { setTopCountries(getTopCountries(deathsTimelineData)) }
+      if (!alignTimelineOptions.length) { setAlignTimelineOptions(getAlignTimelineOptions(deathsTimelineData)) }
     }
-  }, [deathsTimelineData, topCountries]);
+  }, [deathsTimelineData, topCountries, alignTimelineOptions]);
 
   /* Functions */
   async function getDeathsTimelineData() {
@@ -125,6 +132,18 @@ export default function DeathsPerMillionChart() {
     }
   }
 
+  function getAlignTimelineOptions(deathsTimelineData) {
+    const max = _.max(deathsTimelineData.map(entry => {
+      const entryWithoutDateKey = _.omit(entry, 'date')
+      return _.max(Object.values(entryWithoutDateKey))
+    }))
+    const alignTimelineOptions = [ { key: 0, text: 'None', value: 0 } ]
+    console.log({ max })
+    for (let i = 1; i < max; i++ ) {
+      alignTimelineOptions.push({ key: i, text: i, value: i })
+    }
+    return alignTimelineOptions
+  }
 
   function getRandomColour() {
     return '#'+ Math.round(Math.random() * 0xffffff).toString(16).padStart(6,'0')
@@ -174,10 +193,11 @@ export default function DeathsPerMillionChart() {
           content='Shift the graphs to start at the chosen value'
           trigger={
             <Dropdown
+              disabled={!alignTimelineOptions.length}
               style={{ flexBasis: '20%' }}
               fluid
               placeholder='Align'
-              options={['None',1,2,3].map((item) => ({ key: item, text: item, value: item }))}
+              options={alignTimelineOptions}
               search
               selection
             />
@@ -189,7 +209,7 @@ export default function DeathsPerMillionChart() {
           <LineChart
             width={500}
             height={400}
-            data={deathsTimelineData}
+            data={adjustedTimelineData}
             margin={{
               top: 10, right: 30, left: 0, bottom: 0,
             }}
