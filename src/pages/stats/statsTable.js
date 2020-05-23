@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Flag } from 'semantic-ui-react';
 import './style.css';
 
 const useSortableData = (items, config = null) => {
+  useEffect(() => {
+    requestSort('confirmed')
+  }, []); //eslint-disable-line
   const [sortConfig, setSortConfig] = React.useState(config);
 
   const sortedItems = React.useMemo(() => {
@@ -105,18 +108,18 @@ const StatsTable = (props) => {
           <tbody>
             {items.map((item, index) => (
               <tr key={Math.random()}>
-                <td style={{ position: 'sticky', left: 0, background: 'white' }}>
+                <td className="initialColumn" style={{ position: 'sticky', left: 0 }}>
                   <div style={{ width: 20, float: 'left' }}>{Number(index + 1)}</div>
                   <Flag name={item.country.toLowerCase()} />
                   <Link to={`/?country=${item.iso2}`}>
                     {item.country}
                   </Link>
                 </td>
-                <td>{item.confirmed}</td>
-                <td>{item.deaths}</td>
+                <td>{item.confirmed.toLocaleString()}</td>
+                <td>{item.deaths.toLocaleString()}</td>
                 <td>{(Math.round(item.deaths * 100) / item.confirmed).toFixed(1)}%</td>
-                <td>{item.recovered}</td>
-                <td>{item.active}</td>
+                <td>{item.recovered.toLocaleString()}</td>
+                <td>{item.active.toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
