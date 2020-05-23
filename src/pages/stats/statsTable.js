@@ -109,7 +109,7 @@ const StatsTable = (props) => {
             {items.map((item, index) => (
               <tr key={Math.random()}>
                 <td className="initialColumn" style={{ position: 'sticky', left: 0 }}>
-                  <div style={{ width: 20, float: 'left' }}>{Number(index + 1)}</div>
+                  <div style={{ minWidth: 20, float: 'left' }}>{Number(index + 1)}</div>
                   <Flag name={item.country.toLowerCase()} />
                   <Link to={`/?country=${item.iso2}`}>
                     {item.country}
