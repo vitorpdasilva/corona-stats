@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Divider } from 'semantic-ui-react';
+import { Divider, Loader } from 'semantic-ui-react';
 import { ComposedChart, Line, Legend, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { API_URL } from '../../constants';
@@ -48,12 +48,17 @@ const Daily = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Charts</h1>
-      <p>How the Global Outbreak evolved from 20/01/2020 until today</p>
-      <Link to="/">&larr; Back to data and filters</Link>
-      <Divider />
-      <BuildChart />
-      <Divider />
-      <DeathsPerMillionChart />
+      {!dataChart ? <div style={{ position: 'relative' }}><Loader active /></div> : (
+        <>
+          <p>How the Global Outbreak evolved from 20/01/2020 until today</p>
+          <Link to="/">&larr; Back to data and filters</Link>
+          <Divider />
+          <BuildChart />
+          <Divider />
+          <DeathsPerMillionChart />
+        </>  
+      )}
+      
     </div>
   )
 }

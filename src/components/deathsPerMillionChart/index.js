@@ -190,9 +190,6 @@ export default function DeathsPerMillionChart() {
     setAdjustedTimelineData(adjustedTimelineData)
   }
 
-  console.log(_.difference(Object.keys(populationData).map(country => country), Object.keys(searchableCountries).map(country => getPopulationAlias(country)) ))
-  console.log(populationMissing)
-
   const searchOptions = Object.keys(searchableCountries).sort().map(country => ({
     key: country,
     text: country,
@@ -225,8 +222,6 @@ export default function DeathsPerMillionChart() {
           trigger={
             <Dropdown
               disabled={!alignTimelineOptions.length}
-              style={{ flexBasis: '20%' }}
-              fluid
               placeholder='Align'
               options={alignTimelineOptions}
               onChange={adjustTimelineData}
