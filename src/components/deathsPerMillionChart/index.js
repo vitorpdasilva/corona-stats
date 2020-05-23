@@ -210,26 +210,29 @@ export default function DeathsPerMillionChart() {
           selection
           value={selectedCountries}
         />
-        <Button 
-          style={{ whiteSpace: 'nowrap', marginLeft: '10px', marginRight: '10px' }}
-          onClick={addTopCountries}
-          disabled={!topCountries.length}
-        >
-          Top {TOP_COUNTRIES_NUMBER}
-        </Button>
-        <Popup
-          content='Shift the graphs to start at the chosen value'
-          trigger={
-            <Dropdown
-              disabled={!alignTimelineOptions.length}
-              placeholder='Align'
-              options={alignTimelineOptions}
-              onChange={adjustTimelineData}
-              search
-              selection
-            />
-          }
-        />
+        <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column' }}>
+          <Button 
+            style={{ flexGrow: '1', marginRight: '0' }}
+            onClick={addTopCountries}
+            disabled={!topCountries.length}
+          >
+            Top {TOP_COUNTRIES_NUMBER}
+          </Button>
+          <Popup
+            content='Shift the graphs to start at the chosen value'
+            trigger={
+              <Dropdown
+                disabled={!alignTimelineOptions.length}
+                placeholder='Align'
+                style={{ marginTop: '10px' }}
+                options={alignTimelineOptions}
+                onChange={adjustTimelineData}
+                search
+                selection
+              />
+            }
+          />
+        </div>
       </div>
       <div style={{ width: '100%', maxWidth: '700px', height: 300 }}>
         <ResponsiveContainer>

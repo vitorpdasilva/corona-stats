@@ -137,7 +137,7 @@ const Dashboard = ({ history, location }) => {
                     basic
                     hideOnScroll
                     trigger={<Icon name='info circle' size="tiny" />}
-                    content={`Some countries does not provide the number of recovered and ${selectedCountryFullName[0].name} seems to one of them`}
+                    content={`Some countries does not provide the number of recovered and ${selectedCountryFullName[0].name} seems to be one of them`}
                     size='small'
                   />
                 )}

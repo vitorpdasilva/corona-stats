@@ -51,7 +51,7 @@ const LastCases = ({ country }) => {
     return (
       <Segment>
         <Dimmer active inverted>
-          <Loader inverted>Loading <br />It's lots of data to be fetched <Icon name="meh" size="large" /></Loader>
+          <Loader inverted>Loading <br />It's a lot of data to be fetched <Icon name="meh" size="large" /></Loader>
         </Dimmer>
         <Image src={PlaceholderImage} />
       </Segment>
@@ -75,7 +75,7 @@ const LastCases = ({ country }) => {
               <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="5 3" />
           <XAxis dataKey="lastUpdate" />
           <YAxis />
           <Tooltip />
