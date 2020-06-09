@@ -107,7 +107,7 @@ const Dashboard = ({ history, location }) => {
       ) : (
         <div style={{ position: 'relative' }}>
           <Statistic.Group 
-            size="tiny"
+            size="mini"
             style={{
               width: '100%',
               maxWidth: '600px',
