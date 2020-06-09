@@ -20,8 +20,8 @@ const DeathsDetail = ({ selectedCountry, detail }) => {
               {i.state && i.state !== 'null' ? i.state : 'Province or State not provided'}
             </Accordion.Title>
             <Accordion.Content active={activeAccordionIndex === index}>
-              Confirmed cases: {i.confirmed} <br />
-              Confirmed deaths: {i.deaths} <br />
+              Confirmed cases: {i.confirmed.toLocaleString()} <br />
+              Confirmed deaths: {i.deaths.toLocaleString()} <br />
             </Accordion.Content>
           </div>
         ))}

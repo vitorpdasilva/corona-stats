@@ -85,7 +85,7 @@ const StatsTable = (props) => {
                   Mortality
                 </button>
               </th>
-              <th>
+              {/* <th>
                 <button
                   type="button"
                   onClick={() => requestSort('recovered')}
@@ -93,7 +93,7 @@ const StatsTable = (props) => {
                 >
                   Recover
                 </button>
-              </th>
+              </th> */}
               <th>
                 <button
                   type="button"
@@ -118,7 +118,7 @@ const StatsTable = (props) => {
                 <td>{item.confirmed.toLocaleString()}</td>
                 <td>{item.deaths.toLocaleString()}</td>
                 <td>{(Math.round(item.deaths * 100) / item.confirmed).toFixed(1)}%</td>
-                <td>{item.recovered.toLocaleString()}</td>
+                {/* <td>{item.recovered.toLocaleString()}</td> */}
                 <td>{item.active.toLocaleString()}</td>
               </tr>
             ))}
