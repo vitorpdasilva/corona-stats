@@ -17,7 +17,7 @@ const Dashboard = () => {
   const [detail, setDetail] = useState([])
   const [showDetail, setShowDetail] = useState(false);
   const [message, setMessage] = useState();
-  const [setTimeRange, timeRange] = useState(30)
+  const [timeRange, setTimeRange] = useState(30)
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
 
   useEffect(() => {
@@ -25,13 +25,13 @@ const Dashboard = () => {
       setLoading(true);
       setMessage(null)
       const resStats = await fetch(`${API_URL}${selectedCountry && selectedCountry !== "GLOBAL" ? `/countries/${selectedCountry}` : '' }`).then(data => data.json())
-      const details = await fetch(resStats.deaths.detail).then(data => data.json());
+      const details = await fetch(resStats?.deaths?.detail).then(data => data.json());
       
       const detailsGrouped = _.groupBy(details, 'provinceState');
-      
       setDetail(formatGroupedData(detailsGrouped));
       setLastUpdate(resStats.lastUpdate)
       setShowDetail(true)
+      setLoading(false);
     }
     fetchStats();
   }, [selectedCountry]);
@@ -46,7 +46,7 @@ const Dashboard = () => {
       dispatch({ type: 'DAILY_DATA', payload: rawDailyData })
     }
     fetchDailyData();
-  }, [dispatch]) //eslint-disable-line
+  }, []) //eslint-disable-line
 
   const formatGroupedData = (grouped) => {
     const formattedData = [];

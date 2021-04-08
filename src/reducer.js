@@ -15,6 +15,11 @@ export default function reducer(state, { type, payload }) {
         ...state,
         sidebarOpen: payload,
       }
+    case "THEME":
+      return {
+        ...state,
+        theme: payload,
+      }
     default:
       return state;
   }

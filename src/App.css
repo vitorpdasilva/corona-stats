@@ -1,9 +1,6 @@
-* {
-  border: 0;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+
+
+
 @media screen and (max-width: 400px){
   .ui.tiny.statistic>.value, .ui.tiny.statistics .statistic>.value {
       font-size: 1.5rem!important;

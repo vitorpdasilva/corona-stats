@@ -12,23 +12,22 @@ const CountriesFilter = () => {
   const [selectedCountry, setSelectedCountry] = useState();
 
   useEffect(() => {
-    const setInitialCountryByIp = async () => {
-      if (!selectedCountry && !getParameterByName('country')) {
+    const setInitialCountryByIpOrParam = async () => {
+      const countryParam = getParameterByName('country', location.search);
+      if (!selectedCountry) {
         const { country_code } = await fetch(`${IP_DATA_URL}?api-key=${IP_DATA_KEY}`).then(data => data.json());
-        setSelectedCountry(country_code);
-        dispatch({ type: 'SELECT_COUNTRY', payload: country_code });
+        setSelectedCountry(countryParam ?? country_code);
+
+        dispatch({ type: 'SELECT_COUNTRY', payload: countryParam ?? country_code });
       }
     }
-    setInitialCountryByIp();
-  })
+    setInitialCountryByIpOrParam();
+  }, []); //eslint-disable-line
 
-  useEffect(() => {
-    const country = getParameterByName('country', location.search);
-    setSelectedCountry(country);
-  }, []);
-
-  const selectCountry = (country) => {
+  const selectCountry = country => {
     const countryParam = country ? `?country=${country}` : '';
+    setSelectedCountry(country);
+    dispatch({ type: 'SELECT_COUNTRY', payload: country });
     push({
       search: countryParam
     });
@@ -38,7 +37,7 @@ const CountriesFilter = () => {
   return (
     <StyledFilter>
       <p style={{ margin: '0 10px 0 0' }}>Filter:</p>
-      <select value={selectedCountry} onChange={({ target: { value }}) => selectCountry(value ?? 'GLOBAL')}>
+      <select value={selectedCountry} onChange={({ target: { value }}) => selectCountry(value ? value : 'GLOBAL')}>
         <option value="">GLOBAL</option>
         {COUNTRIES_LIST.map((i, index) => (
           <option key={index} value={i.code}>{i.name}</option>
