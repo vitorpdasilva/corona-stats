@@ -87,33 +87,35 @@ const Dashboard = () => {
               justifyContent: 'space-between',
             }}
           >
-            <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{(!detail || loading) ? <Loader active inline size='mini'/> : formatThousands(detail.totalConfirmed)}</Statistic.Value>
-              <Statistic.Label>Confirmed</Statistic.Label>
-            </Statistic>
-            <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>{(!detail || loading) ? <Loader active inline size='mini'/> : formatThousands(detail.totalDeaths)}</Statistic.Value>
-              <Statistic.Label>Deaths</Statistic.Label>
-            </Statistic>
-            <Statistic style={{ margin: 0 }}>
-              <Statistic.Value>
-                {(!detail || loading) ? (
-                  <Loader active inline size='mini'/>
-                ) : (
-                  formatThousands(detail.totalRecovered)
-                )}
-                {detail.totalRecovered < 1 && (
-                  <Popup
-                    basic
-                    hideOnScroll
-                    trigger={<Icon name='info circle' size="tiny" />}
-                    content={(selectedCountry && selectedCountry !== "GLOBAL" ? `Some countries does not provide the number of recovered and ${selectedCountryFullName[0].name} seems to be one of them` : '')}
-                    size='small'
-                  />
-                )}
-              </Statistic.Value>
-              <Statistic.Label>Recovered</Statistic.Label>
-            </Statistic>
+            {!detail || loading ? (
+              <Loader active inline size='mini'/>
+            ) : (
+              <>
+                <Statistic style={{ margin: 0 }}>
+                  <Statistic.Value>{formatThousands(detail.totalConfirmed)}</Statistic.Value>
+                  <Statistic.Label>Confirmed</Statistic.Label>
+                </Statistic>
+                <Statistic style={{ margin: 0 }}>
+                  <Statistic.Value>{formatThousands(detail.totalDeaths)}</Statistic.Value>
+                  <Statistic.Label>Deaths</Statistic.Label>
+                </Statistic>
+                <Statistic style={{ margin: 0 }}>
+                  <Statistic.Value>
+                    {formatThousands(detail.totalRecovered)}
+                    {detail.totalRecovered < 1 && (
+                      <Popup
+                        basic
+                        hideOnScroll
+                        trigger={<Icon name='info circle' size="tiny" />}
+                        content={(selectedCountry && selectedCountry !== "GLOBAL" ? `Some countries does not provide the number of recovered and ${selectedCountryFullName[0].name} seems to be one of them` : '')}
+                        size='small'
+                      />
+                    )}
+                  </Statistic.Value>
+                  <Statistic.Label>Recovered</Statistic.Label>
+                </Statistic>
+              </>
+            )}
           </Statistic.Group>
           {selectedCountry && selectedCountry !== "GLOBAL" && (
             <>

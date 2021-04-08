@@ -9,7 +9,7 @@ const menuItems = [
   { item: 'Charts', icon: 'chart line', url: 'daily'},
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ visible }) => {
   const { dispatch, state: { theme } } = useContext(Context);
   const [checked, setChecked] = useState();
 
@@ -36,7 +36,7 @@ const Sidebar = () => {
   }
 
   return (
-    <StyledSidebar selectedTheme={theme}>
+    <StyledSidebar selectedTheme={theme} visible={visible}>
       <nav>
         {menuItems.map(({ item, icon, url }) => (
           <a key={item} href={url}>

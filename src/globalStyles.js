@@ -25,6 +25,11 @@ const GlobalStyle = createGlobalStyle`
       }
     }
   }
+  .ui.statistic {
+    > .value.value.value, > .label.label.label {
+      color: ${({ theme, selectedTheme }) => theme[selectedTheme].text};
+    }
+  }
 `;
 
 export default GlobalStyle;

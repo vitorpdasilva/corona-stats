@@ -1,19 +1,18 @@
 import styled from 'styled-components';
-import checkTheme from '../../helpers/checkTheme';
-
-// const selectedTheme = checkTheme();
 
 const StyledSidebar = styled.div`
+  transition: margin .3s ease;
   min-height: 100vh;
   border-right: 1px solid lightgrey;
   background: ${({ theme, selectedTheme }) => theme[selectedTheme].background};
+  margin-left: ${({ visible }) => visible ? 0 : '-251px'};
   nav {
     width: 250px;
     display: flex;
     flex-direction:column;
     background: ${({ theme, selectedTheme }) => theme[selectedTheme].background};
     position: sticky;
-    top: 2px;
+    top: 1px;
     a {
       padding: 15px 50px;
       height: 100px;

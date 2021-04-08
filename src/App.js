@@ -38,7 +38,7 @@ const Root = () => {
           <div
             style={{ display: 'flex' }}
           >
-            <Sidebar />
+            <Sidebar visible={visible} />
             <div style={{ width: '100%' }}>
               <Header onClick={() => setVisible(!visible)} />
                 <Switch>
