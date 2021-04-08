@@ -1,4 +1,5 @@
 export const API_URL = 'https://covid19.mathdro.id/api';
+export const IP_DATA_URL = 'https://api.ipdata.co/'
 export const IP_DATA_KEY = '1b726f029d325ad788ba09e0f542deb394329d686c38cb0df5b76b61';
 export const COUNTRIES_LIST = [ 
     {name: 'Afghanistan', code: 'AF'}, 

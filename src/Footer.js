@@ -5,11 +5,9 @@ const Footer = () => {
     <footer
       style={{ 
         display: 'flex',
-        alignItems: 'center',
-        position: 'fixed',
+        justifyContent: 'center',
         bottom: 0,
         width: '100%',
-        flexDirection: 'column'
       }}
     >
       <small>
