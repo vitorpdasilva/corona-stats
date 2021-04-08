@@ -2,62 +2,39 @@ import React, { useState, useEffect, useContext } from 'react';
 import { parseISO, lightFormat, subDays } from 'date-fns';
 import _ from 'lodash';
 import { Divider, Statistic, Loader, Popup, Icon } from 'semantic-ui-react'
-import { API_URL, COUNTRIES_LIST, IP_DATA_KEY } from '../../constants';
+import { API_URL, COUNTRIES_LIST } from '../../constants';
 import Context from '../../context';
 import DashboardWrapper from './styles';
-import getParameterByName from '../../helpers/getQueryParam';
 import formatThousands from '../../helpers/formatThousand';
 import LastCases from './LastCases';
 import Details from './Details';
+import CountriesFilter from '../../components/CountriesFilter';
 
-const Dashboard = ({ history, location }) => {
-  const { dispatch } = useContext(Context);
-  const [selectedCountry, setSelectedCountry] = useState();
+const Dashboard = () => {
+  const { dispatch, state: { selectedCountry } } = useContext(Context);
   const [loading, setLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState();
   const [detail, setDetail] = useState([])
   const [showDetail, setShowDetail] = useState(false);
   const [message, setMessage] = useState();
-  const [timeRange] = useState(30)
+  const [setTimeRange, timeRange] = useState(30)
   const selectedCountryFullName = selectedCountry ? COUNTRIES_LIST.filter(i => i.code === selectedCountry) : null
 
   useEffect(() => {
     const fetchStats = async () => {
-      if (!selectedCountry && !getParameterByName('country')) {
-        setLoading(true);
-        const ipData = await fetch(`https://api.ipdata.co/?api-key=${IP_DATA_KEY}`).then(data => data.json());
-        setSelectedCountry(ipData.country_code);
-        setLoading(false);
-        return
-      }
-      if (selectedCountry === undefined && getParameterByName('country')) {
-        return;
-      }
-      try {
-        setLoading(true);
-        setMessage(null)
-        const resStats = await fetch(`${API_URL}${selectedCountry && selectedCountry !== "GLOBAL" ? `/countries/${selectedCountry}` : '' }`).then(data => data.json())
-        const details = await fetch(resStats.deaths.detail).then(data => data.json());
-        
-        const detailsGrouped = _.groupBy(details, 'provinceState');
-        
-        setDetail(formatGroupedData(detailsGrouped));
-        setLastUpdate(resStats.lastUpdate)
-        setShowDetail(true)
-      } catch (err) {
-        console.log(err);
-        setMessage("No case registered")
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      setMessage(null)
+      const resStats = await fetch(`${API_URL}${selectedCountry && selectedCountry !== "GLOBAL" ? `/countries/${selectedCountry}` : '' }`).then(data => data.json())
+      const details = await fetch(resStats.deaths.detail).then(data => data.json());
+      
+      const detailsGrouped = _.groupBy(details, 'provinceState');
+      
+      setDetail(formatGroupedData(detailsGrouped));
+      setLastUpdate(resStats.lastUpdate)
+      setShowDetail(true)
     }
     fetchStats();
   }, [selectedCountry]);
-
-  useEffect(() => {
-    const country = getParameterByName('country', location.search);
-    setSelectedCountry(country);
-  }, [location.search])
 
   useEffect(() => {
     const fetchDailyData = async () => {
@@ -72,9 +49,9 @@ const Dashboard = ({ history, location }) => {
   }, [dispatch]) //eslint-disable-line
 
   const formatGroupedData = (grouped) => {
-    const formatedData = [];
+    const formattedData = [];
     Object.entries(grouped).forEach((states, index) => {
-      formatedData.push({ state: states[0] });
+      formattedData.push({ state: states[0] });
       let deaths = 0;
       let confirmed = 0;
       let recovered = 0;
@@ -82,23 +59,16 @@ const Dashboard = ({ history, location }) => {
         deaths += parseInt(entry.deaths);
         confirmed += parseInt(entry.confirmed);
         recovered += parseInt(entry.recovered);
-        formatedData[index].deaths = deaths;
-        formatedData[index].confirmed = confirmed;
-        formatedData[index].recovered = recovered;
+        formattedData[index].deaths = deaths;
+        formattedData[index].confirmed = confirmed;
+        formattedData[index].recovered = recovered;
       })
     })
-    formatedData.totalDeaths = _.sumBy(formatedData, 'deaths');
-    formatedData.totalConfirmed = _.sumBy(formatedData, 'confirmed');
-    formatedData.totalRecovered = _.sumBy(formatedData, 'recovered');
-    return formatedData;
+    formattedData.totalDeaths = _.sumBy(formattedData, 'deaths');
+    formattedData.totalConfirmed = _.sumBy(formattedData, 'confirmed');
+    formattedData.totalRecovered = _.sumBy(formattedData, 'recovered');
+    return formattedData;
   };
-
-  const selectCountry = (country) => {
-    const countryParam = country ? `?country=${country}` : '';
-    history.push({
-      search: countryParam
-    });
-  }
 
   const buildStats = () => (
     <>
@@ -156,25 +126,10 @@ const Dashboard = ({ history, location }) => {
     </>
   )
 
-  const filterCountries = () => {
-    if (!COUNTRIES_LIST) return <p>Loading countries...</p>
-    return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <p style={{ margin: '0 10px 0 0' }}>Filter:</p>
-        <select value={selectedCountry} onChange={e => e.target.value ? selectCountry(e.target.value) : selectCountry("GLOBAL")}>
-          <option value="">GLOBAL</option>
-          {COUNTRIES_LIST.map((i, index) => (
-            <option key={index} value={i.code}>{i.name}</option>
-          ))}
-        </select>
-      </div>
-    )
-  }
-
   return (
     <DashboardWrapper>
       <h2 className="title">{selectedCountry && selectedCountry !== "GLOBAL" ? selectedCountryFullName[0].name : "GLOBAL"}</h2>
-      {filterCountries()}
+      <CountriesFilter />
       {buildStats()}
       <Divider hidden />
       {!message && selectedCountry && selectedCountry !== "GLOBAL" && (
@@ -185,7 +140,6 @@ const Dashboard = ({ history, location }) => {
               {timeRange} days
             </strong>
           </div>
-          {console.log(selectedCountry)}
           <LastCases
             country={selectedCountry && selectedCountry !== "GLOBAL" ? selectedCountryFullName[0].name : ''}
             timeRange={timeRange}

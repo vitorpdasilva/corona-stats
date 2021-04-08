@@ -5,6 +5,16 @@ export default function reducer(state, { type, payload }) {
         ...state,
         dailyData: payload,
       }
+    case "SELECT_COUNTRY":
+      return {
+        ...state,
+        selectedCountry: payload,
+      }
+    case "OPENED_SIDEBAR":
+      return {
+        ...state,
+        sidebarOpen: payload,
+      }
     default:
       return state;
   }
